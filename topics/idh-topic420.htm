@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Washer list by name (size-standard)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 420;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Washer list by name (size-standard)
+// ### Compatibility: TS18 or newer
+// #############################################################
+
+//Hint: washer1/washer2/washer3 may have different standards (depends on bolt assembly catalog)
+	        
+//Gathering data for Washers1:
+var washer1 = from n in Database.OfType&ltBoltGroup&gt()
+//Filtering washer1:
+where n.Bolt==true && n.Washer1 == true
+group n by n.GetTeklaReport("washer.name1") into g
+let Name = g.Key
+let InnerD = g.First().GetTeklaReport("washer.inner diameter1")
+let Number = g.Sum(x => x.GetTeklaReport("washer.number1"))
+let Weight = g.Sum(x => (double)(x.GetTeklaReport("washer.weight1", 4)*x.GetTeklaReport("washer.number1")))
+select new { Name, InnerD, Number, Weight };
+
+//Gathering data for Washers2:
+var washer2 = from n in Database.OfType&ltBoltGroup&gt()
+//Filtering washer2:
+where n.Bolt==true && n.Washer2 == true
+group n by n.GetTeklaReport("washer.name2") into g
+let Name = g.Key
+let InnerD = g.First().GetTeklaReport("washer.inner diameter2")
+let Number = g.Sum(x => x.GetTeklaReport("washer.number2"))
+let Weight = g.Sum(x => (double)(x.GetTeklaReport("washer.weight2", 4)*x.GetTeklaReport("washer.number2")))
+select new { Name, InnerD, Number, Weight };
+
+//Gathering data for Washers3:
+var washer3 = from n in Database.OfType&ltBoltGroup&gt()
+//Filtering washer3:
+where n.Bolt==true && n.Washer3 == true
+group n by n.GetTeklaReport("washer.name3") into g
+let Name = g.Key
+let InnerD = g.First().GetTeklaReport("washer.inner diameter3")
+let Number = g.Sum(x => x.GetTeklaReport("washer.number3"))
+let Weight = g.Sum(x => (double)(x.GetTeklaReport("washer.weight3", 4)*x.GetTeklaReport("washer.number3")))
+select new { Name, InnerD, Number, Weight };
+
+//Concatenating three lists (Hint: Lists must have same column names for concatenating):
+var AllWashers = washer1.Concat(washer2).Concat(washer3);
+
+var result = from n in AllWashers
+group n by new { n.Name, n.InnerD } into g
+let TotalNumber = g.Sum(x => x.Number)
+let TotalWeight = Math.Round(g.Sum(x => (double)x.Weight), 4)
+select new { g.Key.Name, g.Key.InnerD, TotalNumber, TotalWeight };
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="370" height="172" border="0" src="images/image(34).png" /></p>
+<p class="ps0"><span class="ts8">&nbsp;</span></p>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="370" height="171" border="0" src="images/image(65).png" /></p>
+</body>
+</html>

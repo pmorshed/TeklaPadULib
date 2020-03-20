@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Spiral beam</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 640;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// ####################################
+// ### Credits: CadMax
+// ### Desc.: Create a spiral beam
+// ####################################
+
+//Hint: Add the following Dlls to references:
+//"Tekla.Structures.dll"
+//"Tekla.Structures.Model.dll"
+//Location: ~\[version]\nt\bin\plugins
+
+using System;
+using Tekla.Structures.Model;
+
+class Program
+{
+	static void Main()
+	{
+		try
+		{
+			Tekla.Structures.Model.Model model = new Model();
+
+			PolyBeam pb = new PolyBeam(PolyBeam.PolyBeamTypeEnum.BEAM);
+
+			for (int i = 0; i < 99; i++)
+			{
+				double z = 3000 - 30 * i;
+				double angle = (Convert.ToDouble(i) % 20) * 18 / 180 * Math.PI;
+				double dia = i * 10;
+
+				double x = dia * Math.Sin(angle);
+				double y = dia * Math.Cos(angle);
+				Tekla.Structures.Model.ContourPoint p = new ContourPoint(new Tekla.Structures.Geometry3d.Point(x, y, z), new Chamfer());
+
+				pb.Contour.AddContourPoint(p);
+			}
+			pb.Profile.ProfileString = "D100";
+			pb.Insert();
+
+			model.CommitChanges();
+		}
+		catch (Exception)
+		{}
+	}
+}
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p><img width="102" height="153" border="0" src="images/spiralbeamsample.png" /></p>
+</body>
+</html>

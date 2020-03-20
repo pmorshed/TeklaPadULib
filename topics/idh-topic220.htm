@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Plate list by thickness by phase</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 220;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Plate list by thickness by phase
+// ### Compatibility: TS18 or newer
+// #############################################################
+
+//Walking through database items(selected items) and filtering "Parts":
+var result = from n in Database.OfType&ltPart&gt()
+//Filtering plates (plate profiles and contour plates): 
+where n.GetTeklaReport("profile type") == "B"
+//Finding thickness (minimum of dimensions):
+let length = n.GetTeklaReport("length net")
+let width = n.GetTeklaReport("width")
+let height = n.GetTeklaReport("height")
+let thickness = Math.Min(Math.Min(length, width), height)
+let phase = n.GetTeklaReport("phase")
+//Grouping by thickness and phase:
+group n by new {thickness, phase } into g
+//Defining required column:
+let PlatePhase = g.Key.phase
+let WeightTotal = Math.Round(g.Sum(x => (double)x.GetTeklaReport("weight net")), 2)
+//Selecting a new table (from orginal database) with required columns:
+select new { PlatePhase, Plate = "Plate" + g.Key.thickness, WeightTotal };
+//Passing the final result to the gridview:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="290" height="206" border="0" src="images/image(11).png" /></p>
+</body>
+</html>

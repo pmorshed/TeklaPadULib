@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Bolt list by name by type (site/workshop)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 350;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Bolt list by name by type (site/workshop)
+// ### Compatibility: TS18 or newer
+// #############################################################
+
+//Walking through database items(selected items) and filtering "Bolts":
+var result = from n in Database.OfType&ltBoltGroup&gt()
+//Removing holes:
+where n.Bolt == true
+//Grouping by name and type:
+let key1 = n.GetTeklaReport("name")
+let key2 = n.GetTeklaReport("site workshop")
+let key3 = n.BoltStandard
+group n by new { key1, key2, key3 } into g
+//Defining required columns:
+let Bolt = g.Key.key1
+let Type = g.Key.key2
+let AssemblyStandard = g.Key.key3 //Assembly cataloge standard
+let No = g.Sum(x => x.GetTeklaReport("number"))
+let TotalLength = g.Sum(x => (double)(x.GetTeklaReport("length") * x.GetTeklaReport("number")))
+//Selecting a new table (from orginal database) with required columns:
+select new { Bolt, AssemblyStandard, Type, No, TotalLength };
+//Passing the final result to the gridview:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="450" height="217" border="0" src="images/image(26).png" /></p>
+</body>
+</html>

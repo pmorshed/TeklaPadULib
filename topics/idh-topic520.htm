@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Cast unit rebars with pull-out picture by pos</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 520;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Cast unit rebars with pull-out picture by pos
+// ### Compatibility: TS18 or newer
+// ### Hint: Make sure that numbering of objects is up to date.
+// #############################################################
+
+//Walking through database items(selected items) and filtering "Assemblies":
+var result = from a in Database.OfType&ltAssembly&gt()
+//Filtering cast units:
+where a.GetTeklaReport("material type") == "CONCRETE"
+from Part p in a.PartList()
+from Reinforcement r in p.GetReinforcements().GetArray()
+//Removing strands:
+where r.GetType().Name != "RebarStrand" && r.IsGeometryValid()
+//Grouping by rebar pos:
+group r by new { key1 = r.GetTeklaReport("rebar pos"), key2 = r.GetTeklaReport("grade") }  into g
+let rebar = g.First()
+//-------Temporary variable(Returns "true" for tapered groupes-----
+let IsTapered = rebar.GetTeklaReport("length min") != rebar.GetTeklaReport("length max")
+//-----------------------------------------------------------------
+//Defining required columns:
+let Size = rebar.GetTeklaReport("size")
+let Pos = g.Key.key1
+let Grade = g.Key.key2
+let Shape = rebar.GetTeklaReport("shape")
+let Pcs = g.Sum(x => x.GetNumberOfRebars()) //or g.Sum(x => x.GetTeklaReport("number"))
+let Unitlength = IsTapered==true ? "VAR" : rebar.GetTeklaReport("length")
+let UnitWeight = IsTapered==true ? "VAR" : rebar.GetTeklaReport("weight")
+//Hint: It's recommended to use "WEIGHT_TOTAL_IN_GROUP" attribute instead of "WEIGHT_TOTAL" in newer versions of Tekla
+let TotalWeight = IsTapered==true ? g.Sum(x => (double)x.GetTeklaReport("weight total", 6)) : UnitWeight*Pcs
+let TotalLength = IsTapered? Math.Round(TotalWeight*rebar.GetTeklaReport("length",7)/rebar.GetTeklaReport("weight",7),3) : Unitlength*Pcs
+//Hint: Make sure that rebar numbers are up to date while using "GetTeklaPullOut" method.
+let pic = rebar.GetTeklaPullOut()
+//Selecting a new table (from orginal database) with required columns:
+select new { Pos, Size, Grade, Shape, Pcs, Unitlength, TotalLength, UnitWeight, TotalWeight, pic };
+//Passing the final result to the gridview:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="570" height="238" border="0" src="images/image(44).png" /></p>
+<p class="ps0"><span class="ts8">&nbsp;</span></p>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="570" height="257" border="0" src="images/image(45).png" /></p>
+</body>
+</html>

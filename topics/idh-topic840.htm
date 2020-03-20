@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Rebar schedule by phase with pull-out picture</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 840;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Rebar schedule by phase with pull-out picture
+// ### Compatibility: TS18 or newer
+// ### Hint: Not good for RebarSets 
+// ### Hint: Make sure that numbering of objects is up to date.
+// #############################################################
+
+//Walking through database items(selected items) and filtering "Rebars":
+var result = from r in Database.OfType&ltReinforcement&gt()
+//Removing strands:
+where r.GetType().Name != "RebarStrand" && r.IsGeometryValid()
+//Grouping rebars by position number:
+let key1 = r.GetTeklaReport("rebar pos")
+let key2 = r.GetTeklaReport("grade")
+let key3 = r.GetTeklaReport("phase")
+group r by new { key1, key2, key3 } into g
+let rebar = g.First()
+//-------Temporary variable(Returns "true" for tapered groupes-----
+let IsTapered = rebar.GetTeklaReport("length min") != rebar.GetTeklaReport("length max")
+//-----------------------------------------------------------------
+//Defining required columns:
+let Phase = g.Key.key3
+let Pos = g.Key.key1
+let grade = g.Key.key2
+let Size = rebar.GetTeklaReport("size")
+//Type (Normal=0, Tapered=1, Tapered2=2, Tapered curved=3, Tapered N=4, Spiral=5)
+let Type = rebar.GetTeklaReport("group type")
+let Pcs = g.Sum(x => x.GetNumberOfRebars()) //or g.Sum(x => x.GetTeklaReport("number"))
+let Unitlength = IsTapered == true ? "VAR" : rebar.GetTeklaReport("length")
+let UnitWeight = IsTapered == true ? "VAR" : rebar.GetTeklaReport("weight")
+//Hint: It's recommended to use "WEIGHT_TOTAL_IN_GROUP" attribute instead of "WEIGHT_TOTAL" in newer versions of Tekla
+let TotalWeight = IsTapered == true ? Math.Round(g.Sum(x => (double)x.GetTeklaReport("weight total", 6)), 3) : UnitWeight * Pcs
+let TotalLength = IsTapered ? Math.Round(TotalWeight * rebar.GetTeklaReport("length", 7) / rebar.GetTeklaReport("weight", 7), 3) : Unitlength * Pcs
+//Hint: Make sure that rebar numbers are up to date while using "GetTeklaPullOut" method.
+let pic = rebar.GetTeklaPullOut()
+//Selecting a new table (from orginal database) with required columns:
+select new { Phase, Pos, grade, Type, Size, Pcs, Unitlength, UnitWeight, TotalLength, TotalWeight, pic };
+//Passing the final result to the gridview:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="570" height="303" border="0" src="images/image(55).png" /></p>
+<p class="ps0"><span class="ts8">&nbsp;</span></p>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="570" height="376" border="0" src="images/image(56).png" /></p>
+<p class="ps0"><span class="ts8">&nbsp;</span></p>
+</body>
+</html>

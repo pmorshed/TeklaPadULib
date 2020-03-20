@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Nut list by name by phase</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 400;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Nut list by name by phase
+// ### Compatibility: TS18 or newer
+// #############################################################
+
+//Gathering data for Nut1:
+var nut1 = from n in Database.OfType&ltBoltGroup&gt()
+//Making sure that nut1 exists in boltgroup:
+where n.Bolt == true && n.Nut1 == true && n.GetTeklaReport("nut.weight1") > 0
+//Grouping by name and phase:
+group n by new { key1 = n.GetTeklaReport("nut.name1"), key2 = n.GetTeklaReport("phase") } into g
+//Defining columns:
+let Name = g.Key.key1
+let InnerD = g.First().GetTeklaReport("nut.inner diameter1")
+let Number = g.Sum(x => x.GetTeklaReport("nut.number1"))
+let Weight = g.Sum(x => (double)(x.GetTeklaReport("nut.weight1", 4)*x.GetTeklaReport("nut.number1")))
+let PhaseNumber = g.Key.key2
+select new { Name, PhaseNumber, InnerD, Number, Weight };
+
+//Gathering data for Nut2:
+var nut2 = from n in Database.OfType&ltBoltGroup&gt()
+//Making sure that nut2 exists in boltgroup:
+where n.Bolt == true && n.Nut2 == true && n.GetTeklaReport("nut.weight2") > 0
+//Grouping by name and phase:
+group n by new { key1 = n.GetTeklaReport("nut.name2"), key2 = n.GetTeklaReport("phase") } into g
+//Defining columns:
+let Name = g.Key.key1
+let InnerD = g.First().GetTeklaReport("nut.inner diameter2")
+let Number = g.Sum(x => (int)x.GetTeklaReport("nut.number1"))
+let Weight = g.Sum(x => (double)(x.GetTeklaReport("nut.weight2", 4)*x.GetTeklaReport("nut.number1")))
+let PhaseNumber = g.Key.key2
+select new { Name, PhaseNumber, InnerD, Number, Weight };
+
+//Concatenating two lists (Hint: Lists must have same column names for concatenating):
+var AllNuts = nut1.Concat(nut2);
+
+//Walking through final nut list:
+var result = from n in AllNuts
+//Grouping by name and phase
+group n by new { n.Name, n.InnerD, n.PhaseNumber } into g
+//Defining required columns for final result:
+let TotalNumber = g.Sum(x => x.Number)
+let TotalWeight = Math.Round(g.Sum(x => (double)x.Weight), 4)
+select new { g.Key.Name, g.Key.PhaseNumber, g.Key.InnerD, TotalNumber, TotalWeight };
+//Passing the final result to the gridView:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="350" height="244" border="0" src="images/image(31).png" /></p>
+</body>
+</html>

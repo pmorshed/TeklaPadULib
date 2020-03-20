@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Extend</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 630;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// ####################################
+// ### Credits: Tekla Corporation
+// ### Desc.: Extend beams
+// ####################################
+
+//Hint: Add the following Dlls to references:
+//"Tekla.Structures.dll"
+//"Tekla.Structures.Model.dll"
+//Location: ~\[version]\nt\bin\plugins
+
+using System;
+using Tekla.Structures.Model;
+using Tekla.Structures.Geometry3d;
+using TS3D= Tekla.Structures.Geometry3d;
+
+class MyClass
+{
+	static void Main()
+	{
+		string Prompt1 = "Pick the Primary Part";
+		string Prompt2 = "Pick the Secondary Parts, then Press the Middle Mouse Button When Done";
+		Model Model1 = new Model();
+		Tekla.Structures.Model.UI.Picker Pick1 = new Tekla.Structures.Model.UI.Picker();
+		bool keepgoing = true;
+		while (keepgoing)
+		{
+			try
+			{
+				Beam Beam1 = Pick1.PickObject(Tekla.Structures.Model.UI.Picker.PickObjectEnum.PICK_ONE_PART, Prompt1) as Beam;
+				double Xdist = Beam1.StartPoint.X - Beam1.EndPoint.X;
+				double Ydist = Beam1.StartPoint.Y - Beam1.EndPoint.Y;
+				TS3D.Vector Vector1 = new TS3D.Vector(Xdist, Ydist, 0);
+
+				TS3D.GeometricPlane Plane1 = new GeometricPlane(Beam1.StartPoint, Vector1, new TS3D.Vector(0, 0, 1));
+
+				ModelObjectEnumerator Beams = Pick1.PickObjects(Tekla.Structures.Model.UI.Picker.PickObjectsEnum.PICK_N_PARTS, Prompt2);
+
+				while (Beams.MoveNext())
+				{
+					Beam Beam2 = Beams.Current as Beam;
+					if (Beam2 != null)
+					{
+
+						TS3D.Point IntersectPoint = TS3D.Intersection.LineToPlane(new Line(Beam2.StartPoint, Beam2.EndPoint), Plane1);
+						TS3D.LineSegment Lineseg1 = TS3D.Intersection.LineToLine(new Line(IntersectPoint, new TS3D.Point(IntersectPoint.X, IntersectPoint.Y, IntersectPoint.Z + 100)), new Line(Beam1.StartPoint, Beam1.EndPoint));
+						if (TS3D.Distance.PointToPoint(Beam2.StartPoint, Lineseg1.Point1) <= TS3D.Distance.PointToPoint(Beam2.EndPoint, Lineseg1.Point1))
+						{
+							Beam2.StartPoint = Lineseg1.Point1;
+							Beam2.Modify();
+						}
+						else
+						{
+							Beam2.EndPoint = Lineseg1.Point1;
+							Beam2.Modify();
+						}
+					}
+				}
+				Model1.CommitChanges();
+			}
+			catch
+			{
+				keepgoing = false;
+			}
+		}
+	}
+}
+
+</pre>
+</body>
+</html></p>
+</body>
+</html>

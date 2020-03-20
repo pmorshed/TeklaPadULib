@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Cast unit by pos</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 440;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Cast unit by pos
+// ### Compatibility: TS18 or newer
+// ### Measurement units: Metric
+// ### Hint: Make sure that numbering of objects is up to date.
+// #############################################################
+
+//Walking through database items(selected items) and filtering "Assemblies":
+var query = from n in Database.OfType&ltAssembly&gt()
+//Filtering cast units:
+where n.GetTeklaReport("material type") == "CONCRETE"
+//Grouping by cast unit position number:
+let CU_POS = n.GetTeklaReport("cast unit pos")
+group n by CU_POS into g
+//Defining required columns:
+let Pos = g.Key
+let No = g.Count()
+let Name = g.First().GetTeklaReport("cast unit name")
+let Material = g.First().GetTeklaReport("material")
+let RebarWeightInCU = g.First().GetTeklaReport("cast unit rebar weight", 4)
+let CU_Type = g.First().GetTeklaReport("cast unit type")
+//Converting from from mm3 to m3:
+let CU_Volume = Math.Round(g.First().GetTeklaReport("volume net", 9) / 1000000000, 3)
+//Converting from Kg to Ton:
+let CU_Weight = g.First().GetTeklaReport("weight", 4) / 1000
+let Vol_Tot = CU_Volume * No
+let W_Tot = CU_Weight * No
+//Selecting a new table (from orginal database) with required columns:
+select new { Pos, No, Name, Material, CU_Type, RebarWeightInCU, CU_Volume, CU_Weight, Vol_Tot, W_Tot };
+//Passing the final result to the gridview:
+return query;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="650" height="116" border="0" src="images/image(37).png" /></p>
+</body>
+</html>

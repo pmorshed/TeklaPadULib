@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Beam plugin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 680;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// ####################################
+// ### Credits: Tekla Corporation
+// ### Desc.: Beam plugin
+// ####################################
+
+//Hint: Add the following Dlls to references:
+//"Tekla.Structures.dll"
+//"Tekla.Structures.Model.dll"
+//"Tekla.Structures.Plugins.dll"
+//Location: ~\[version]\nt\bin\plugins
+
+using System;
+using System.Collections.Generic;
+using Tekla.Structures.Plugins;
+using Tekla.Structures.Geometry3d;
+using Tekla.Structures.Model.UI;
+using TSM = Tekla.Structures.Model;
+
+public class StructuresData 
+{
+       [Tekla.Structures.Plugins.StructuresField("P1")]
+       public double Parameter1;
+}
+
+[Plugin("BeamPlugin")] // Mandatory field which defines that this is the plug-in and stores the name of the plug-in to the system.
+[PluginUserInterface(BeamPlugin.UserInterfaceDefinitions.Plugin1)] // Mandatory field which defines the user interface the plug-in uses. A Windows Forms class or a .inp file.
+public class BeamPlugin: PluginBase
+{
+       private readonly StructuresData data;
+
+       // The constructor argument defines the database class StructuresData and sets the data to be used in the plug-in.
+       public BeamPlugin(StructuresData data)
+       {
+           TSM.Model M = new TSM.Model();
+           this.data = data;
+       }
+
+       //Defines the inputs to be passed to the plug-in.
+       public override List&ltInputDefinition&gt DefineInput()
+       {
+           Picker BeamPicker = new Picker();
+           List&ltInputDefinition&gt PointList = new List&ltInputDefinition&gt();
+
+           Point Point1 = BeamPicker.PickPoint();
+           Point Point2 = BeamPicker.PickPoint();
+
+           InputDefinition Input1 = new InputDefinition(Point1);
+           InputDefinition Input2 = new InputDefinition(Point2);
+           PointList.Add(Input1);
+           PointList.Add(Input2);
+
+           return PointList;
+       }
+
+       //Main method of the plug-in.
+       public override bool Run(List&ltInputDefinition&gt Input)
+       {
+           try
+           {
+               Point Point1 = (Point)(Input[0]).GetInput();
+               Point Point2 = (Point)(Input[1]).GetInput();
+               Point LengthVector = new Point(Point2.X - Point1.X, Point2.Y - Point1.Y, Point2.Z - Point1.Z);
+
+               if(data.Parameter1 > 0)
+               {
+                   Point2.X = data.Parameter1 * LengthVector.X + Point1.X;
+                   Point2.Y = data.Parameter1 * LengthVector.Y + Point1.Y;
+                   Point2.Z = data.Parameter1 * LengthVector.Z + Point1.Z;
+               }
+
+               CreateBeam(Point1, Point2);
+           }
+           catch(Exception)
+           {
+           }
+
+           return true;
+       }
+
+       static void CreateBeam(Point Point1, Point Point2)
+       {
+           TSM.Beam MyBeam = new TSM.Beam(Point1, Point2);
+
+           MyBeam.Profile.ProfileString = "HEA400";
+           MyBeam.Finish = "PAINT";
+           MyBeam.Insert();
+       }
+
+       //.inp file user interface definition.
+       public class UserInterfaceDefinitions
+       {
+           public const string Plugin1 = @"" +
+           @"page(""TeklaStructures"","""")" + "\n" +
+            "{\n" +
+            "    plugin(1, BeamPlugin)\n" +
+            "    {\n" +
+           @"        tab_page(""Beam test"", ""Parametri_1"", 1)" + "\n" +
+            "        {\n" +
+           @"            parameter(""Length factor"", ""P1"", distance, number, 1)" + "\n" +
+            "        }\n" +
+            "    }\n" +
+            "}\n";
+
+       }
+}
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p class="ps2"><span class="ts7">This Tekla Open API example plug-in creates a beam defined by user input.</span></p>
+<p class="ps2"><span class="ts7">User can select the length factor for the beam. The plugin asks the user to pick two points. </span></p>
+<p class="ps2"><span class="ts7">Based on those points, it calculates new insertion points using a double parameter from the dialog and creates a beam. </span></p>
+</body>
+</html>

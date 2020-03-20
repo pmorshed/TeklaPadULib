@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Part bolt list by pos</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 240;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Part bolt list by pos
+// ### Compatibility: TS18 or newer
+// ### Hint: Make sure that numbering of objects is up to date.
+// #############################################################
+
+//STEP-1:
+//Grouping by position number and get one object (first one) from each group: 
+var GroupedParts = from n in Database.OfType&ltPart&gt()
+let Pos = n.GetTeklaReport("part pos")
+group n by Pos into g
+select g.First();
+
+//STEP-2:
+//Finding bolts on each position:
+var result = from n in GroupedParts
+//Walking through bolt groups on each item:
+from BoltGroup b in n.GetBolts().GetArray()
+//Defining variables for grouping:
+let owner = n.GetTeklaReport("part pos") + "(" + n.Profile.ProfileString + ")"
+let BoltSize = b.BoltSize
+//Grouping by bolt size and owner:
+group b by new { owner, BoltSize } into g
+//Selecting a new table with required columns:
+select new { g.Key.owner, bolt = "Bolt-"+g.Key.BoltSize, No = g.Sum(x => x.GetTeklaReport("number")) };
+//Passing the final result to the gridView:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="270" height="173" border="0" src="images/image(14).png" /></p>
+</body>
+</html>

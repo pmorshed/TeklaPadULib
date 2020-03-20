@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Console application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 80;
+</script>
+</head>
+<body>
+<div align="center">
+  <table class="tbl0">
+    <tr class="row0">
+      <td class="cell3">
+        <p><img width="120" height="120" border="0" src="images/libexe.png" /></p>
+      </td>
+      <td class="cell4">
+        <p class="ps0"><span class="ts1">You can use second tab of TeklaPad to create console based applications.</span></p>
+        <p class="ps1"><span class="ts3">&nbsp;</span></p>
+        <p class="ps1"><span class="ts3">&nbsp;</span></p>
+        <p class="ps1"><span class="ts3">&nbsp;</span></p>
+        <p class="ps1"><span class="ts3">&nbsp;</span></p>
+        <p class="ps1"><span class="ts3">&nbsp;</span></p>
+        <p class="ps1"><span class="ts3">&nbsp;</span></p>
+        <p>&nbsp;</p>
+      </td>
+      <td class="cell5">
+        <p>&nbsp;</p>
+      </td>
+      <td class="cell5">
+        <p>&nbsp;</p>
+      </td>
+      <td class="cell5">
+        <p>&nbsp;</p>
+      </td>
+    </tr>
+  </table>
+</div>
+<div align="center">
+  <table class="tbl1">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps2"><span class="ts7">1- Each console application must have &quot;Main&quot; method (</span><span class="ts13">It MUST be called &quot;Main&quot;</span><span class="ts7">):</span></p>
+        <p class="ps2"><span class="ts7">&nbsp;</span></p>
+        <p class="ps2"><span class="ts15">static void Main() </span></p>
+        <p class="ps2"><span class="ts15">&nbsp;{</span><span class="ts16">&nbsp;</span></p>
+        <p class="ps2"><span class="ts16">&nbsp;&nbsp;&nbsp; [your code]</span></p>
+        <p class="ps2"><span class="ts15">&nbsp;}</span></p>
+        <p class="ps2"><span class="ts17">&nbsp;</span></p>
+        <p class="ps2"><span class="ts13">When the computer is asked to run a C# program, it needs to know where to start. It has been taught that, for C# programs, the programmer will always write a method called &quot;Main&quot; and that's where it must start - that's the entry point.</span></p>
+        <p class="ps2"><span class="ts18">&nbsp;</span></p>
+        <p class="ps2"><span class="ts7">2- You must put your methods in a &quot;</span><span class="ts10">class</span><span class="ts7">&quot; block. So, the general structure of your code should be something like this:</span></p>
+        <p class="ps2"><span class="ts7">&nbsp;</span></p>
+        <p class="ps2"><span class="ts19">using</span><span class="ts20">&nbsp;[your namespaces (</span><span class="ts19">Tekla.Structures.Model</span><span class="ts20">&nbsp;or </span><span class="ts19">System</span><span class="ts20">&nbsp;or...)]</span></p>
+        <p class="ps2"><span class="ts19">class</span><span class="ts20">&nbsp;[any name (without space)]</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp; </span><span class="ts19">{</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static void Main() </span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts19">[your code]</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp; </span><span class="ts19">}</span></p>
+        <p class="ps0"><span class="ts8">&nbsp;</span></p>
+        <p class="ps2"><span class="ts7">3- It's highly recommended to wrap your code in &quot;</span><span class="ts10">try-catch&quot;</span><span class="ts7">&nbsp;block to avoid run-time errors:</span></p>
+        <p class="ps2"><span class="ts7">&nbsp;</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static void Main() </span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </span></p>
+        <p class="ps2"><span class="ts19">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try</span></p>
+        <p class="ps2"><span class="ts19">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts19">[your code]</span></p>
+        <p class="ps2"><span class="ts19">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </span></p>
+        <p class="ps2"><span class="ts19">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; catch (Exception)</span></p>
+        <p class="ps2"><span class="ts19">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [exception handling (or you can leave it empty)]</span></p>
+        <p class="ps2"><span class="ts19">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span></p>
+        <p class="ps2"><span class="ts20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span></p>
+        <p class="ps0"><span class="ts8">&nbsp;</span></p>
+        <p class="ps0"><img width="21" height="21" border="0" src="images/warnings.png" /><span class="ts21">Important:</span></p>
+        <p class="ps2"><span class="ts7">All created *.exe files will be removed automatically after closing the TeklaPad.</span></p>
+        <p class="ps2"><span class="ts7">So, you should move/copy your final program with its dependencies (Tekla.Structures.dll or...) to another location (for later usages) before closing the TeklaPad.</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

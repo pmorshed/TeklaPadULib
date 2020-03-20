@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Nut list by GUID</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?2c327b1a"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 380;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Nut list by GUID
+// ### Compatibility: TS18 or newer
+// #############################################################
+
+//Hint: nut1 and nut2 may have different standards (depends on bolt assembly catalog)
+
+//Step-1: Gathering data for Nuts1:
+//Walking through database items(selected items) and filtering "Bolts":
+var nut1 = from n in Database.OfType&ltBoltGroup&gt()
+//Filtering nut1:
+where n.Bolt == true && n.Nut1 == true && n.GetTeklaReport("nut.weight1") >0
+//Defining required columns:
+let Thickenes = n.GetTeklaReport("nut.thickness1")
+let InnerD = n.GetTeklaReport("nut.inner diameter1")
+let OuterD = n.GetTeklaReport("nut.outer diameter1")
+let Name = n.GetTeklaReport("nut.name1")
+let number = n.GetTeklaReport("nut.number1")
+let weight = n.GetTeklaReport("nut.weight1")*number
+let location="Nut1"
+//Selecting a new table (from orginal database) with required columns:
+select new { Name, Thickenes, InnerD, OuterD, number, weight, location, n.Identifier.GUID };
+
+//Step-2: Gathering data for Nuts2:
+var nut2 = from n in Database.OfType&ltBoltGroup&gt()
+//Filtering nut2:
+where n.Bolt == true && n.Nut2 == true && n.GetTeklaReport("nut.weight2") >0
+//Defining required columns
+let Thickenes = n.GetTeklaReport("nut.thickness2")
+let InnerD = n.GetTeklaReport("nut.inner diameter2")
+let OuterD = n.GetTeklaReport("nut.outer diameter2")
+let Name = n.GetTeklaReport("nut.name2")
+let number = n.GetTeklaReport("nut.number1")
+let weight = n.GetTeklaReport("nut.weight2")*number
+let location="Nut2"
+//Selecting a new table (from orginal database) with required columns:
+select new { Name, Thickenes, InnerD, OuterD, number, weight, location, n.Identifier.GUID };
+
+//Step3: Concatenating two lists (Hint: Lists should have same column names for concatenating):
+var result = nut1.Concat(nut2);
+//Passing the final result to the gridview:
+return result;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="500" height="136" border="0" src="images/image(29).png" /></p>
+<p class="ps0"><span class="ts8">&nbsp;</span></p>
+<p class="ps0"><span class="ts9">Usage:</span></p>
+<p><img width="500" height="228" border="0" src="images/image(64).png" /></p>
+</body>
+</html>

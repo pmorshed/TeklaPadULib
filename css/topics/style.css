@@ -1,0 +1,188 @@
+p {
+  margin: 0;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  text-indent: 0;
+  text-align: left;
+  line-height: normal;
+  font-family: 'Times New Roman';
+  font-size: 12pt;
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: none;
+  text-transform: none;
+}
+map > area {
+  outline: none;
+}
+.ts0 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: #1f497d;
+}
+.ts1 {
+  font-family: Tahoma;
+  font-weight: bold;
+}
+.ts2 {
+  font-family: Tahoma;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.ts3 {
+  font-family: Tahoma;
+}
+.ts4 {
+  font-family: Tahoma;
+  font-weight: bold;
+}
+.ts5 {
+  font-family: Tahoma;
+  font-weight: bold;
+}
+.ts6 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: Red;
+}
+.ts7 {
+  font-family: Tahoma;
+}
+.ts8 {
+  font-family: Tahoma;
+}
+.ts9 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: #0070c0;
+}
+.ts10 {
+  font-family: Tahoma;
+  font-weight: bold;
+}
+.ts11 {
+  font-family: Tahoma;
+  font-size: 11pt;
+}
+.ts12 {
+  font-family: Tahoma;
+  font-weight: bold;
+}
+.ts13 {
+  font-family: Tahoma;
+  color: Black;
+}
+.ts14 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: Black;
+}
+.ts15 {
+  font-family: 'Courier New';
+  font-weight: bold;
+  color: #0070c0;
+}
+.ts16 {
+  font-family: 'Courier New';
+  color: #0070c0;
+}
+.ts17 {
+  font-family: 'Courier New';
+  font-weight: bold;
+}
+.ts18 {
+  font-family: Tahoma;
+}
+.ts19 {
+  font-family: 'Courier New';
+  font-weight: bold;
+  color: #0080ff;
+}
+.ts20 {
+  font-family: 'Courier New';
+  color: #0080ff;
+}
+.ts21 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: Red;
+}
+.ts22 {
+  font-family: 'Courier New';
+  font-size: 12pt;
+  font-weight: bold;
+}
+.ts23 {
+  font-family: 'Courier New';
+}
+.ps0 {
+  font-size: 11pt;
+}
+.ps1 {
+  font-size: 9pt;
+}
+.ps2 {
+  font-size: 10pt;
+}
+.hline0 {
+  width: 100%;
+  height: 0px;
+  margin: 8px auto;
+  border-style: solid;
+  border-width: 1px;
+  border-top-color: DimGray;
+  border-right-color: #e3e3e3;
+  border-bottom-color: #e3e3e3;
+  border-left-color: DimGray;
+}
+.tbl0 {
+  border-collapse: collapse;
+  border-style: none;
+}
+.tbl0 > tbody > tr.row0 {
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell0 {
+  width: 124.5pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell1 {
+  width: 518.25pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell2 {
+  width: 7.5pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell3 {
+  width: 183.75pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell4 {
+  width: 252.75pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell5 {
+  width: 119.25pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl1 {
+  width: 100%;
+  border-collapse: collapse;
+  border-style: none;
+}
+.tbl1 > tbody > tr.row0 {
+  border-style: none;
+}
+.tbl1 > tbody > tr > td.cell0 {
+  vertical-align: top;
+  border-style: none;
+}
