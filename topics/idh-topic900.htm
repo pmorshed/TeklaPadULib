@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Bolt list with connected parts</title>
+<title>Example-1</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -20,7 +20,7 @@ body {
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
-	var topicContext = 370;
+	var topicContext = 900;
 </script>
 </head>
 <body>
@@ -44,33 +44,19 @@ pre {
 
 // #############################################################
 // ### Author: TeklaPad
-// ### Desc.: Bolt list with connected parts
+// ### Desc.: Access to model objects from drawing objects.
 // ### Compatibility: TS18 or newer
-// ### Hint: Make sure that numbering of objects is up to date.
+// ### Hint: Make sure that your drawing is open.
 // #############################################################
 
-//Walking through database items(selected items) and filtering "Bolts":
-var result = from n in Database.OfType&ltBoltGroup&gt()
-//Removing holes:
-where n.Bolt == true
-//Define variables for grouping:
-let key1 = n.GetTeklaReport("assembly pos")
-let key2 = n.GetTeklaReport("name") //Contains [size]-[length]-[bolt standard]
-let key3 = n.GetTeklaReport("connected parts")
-//Bolt standard in bolt assembly catalog:
-let key4 = n.BoltStandard
-//Grouping by key1~4:
-group n by new { key1, key2, key3, key4 } into g
-//Defining required columns based on grouped variables:
-let Assembly = g.Key.key1 + "(No.: " + g.Count() + " )"
-let Bolt = g.Key.key2
-let TotalNumber = g.Sum(x => x.GetTeklaReport("number"))
-let ConnectedParts = g.Key.key3
-let BoltAssembly = g.Key.key4
-let Size = g.First().BoltSize
-let length = g.First().GetTeklaReport("length")
-//Selecting a new table (from orginal database) with required columns:
-select new { Assembly, Bolt, BoltAssembly, Size,length, TotalNumber, ConnectedParts };
+//Walking through selected drawing objects (DrawingDatabase) and getting collection of related model objects:
+var result = from n in DrawingDatabase.GetModelObjectsOfType&ltPart&gt()
+//Defining required variables:
+let profile = n.Profile.ProfileString
+let weight = n.GetTeklaReport("weight net")
+let volume = n.GetTeklaReport("volume net")
+//Selecting a new table (from orginal drawing database) with required columns:
+select new { profile, weight, volume };
 //Passing the final result to the gridview:
 return result;
 
@@ -81,6 +67,6 @@ return result;
   <div class="hline0"></div>
 </div>
 <p class="ps0"><span class="ts11">Usage:</span></p>
-<p><img width="540" height="166" border="0" src="images/image(28).png" /></p>
+<p><img width="380" height="416" border="0" src="images/image(68).png" /></p>
 </body>
 </html>
