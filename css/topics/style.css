@@ -33,19 +33,20 @@ map > area {
 }
 .ts3 {
   font-family: Tahoma;
+  font-weight: bold;
+  color: #00b050;
 }
 .ts4 {
   font-family: Tahoma;
-  font-weight: bold;
 }
 .ts5 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #1f497d;
 }
 .ts6 {
   font-family: Tahoma;
   font-weight: bold;
+  color: #1f497d;
 }
 .ts7 {
   font-family: Tahoma;
@@ -54,93 +55,97 @@ map > area {
 .ts8 {
   font-family: Tahoma;
   font-weight: bold;
-  color: Red;
 }
 .ts9 {
   font-family: Tahoma;
+  font-weight: bold;
+  color: Red;
 }
 .ts10 {
   font-family: Tahoma;
 }
 .ts11 {
   font-family: Tahoma;
-  font-weight: bold;
-  color: #0070c0;
 }
 .ts12 {
   font-family: Tahoma;
-  font-size: 11pt;
+  font-weight: bold;
+  color: #0070c0;
 }
 .ts13 {
   font-family: Tahoma;
-  font-weight: bold;
+  font-size: 11pt;
 }
 .ts14 {
   font-family: Tahoma;
-  font-size: 11pt;
   font-weight: bold;
 }
 .ts15 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
-  color: #1f497d;
 }
 .ts16 {
   font-family: Tahoma;
+  font-size: 11pt;
   font-weight: bold;
-  color: #7f7f7f;
+  color: #1f497d;
 }
 .ts17 {
   font-family: Tahoma;
   font-weight: bold;
-  text-decoration: underline;
+  color: #7f7f7f;
 }
 .ts18 {
   font-family: Tahoma;
-  color: Black;
+  font-weight: bold;
+  text-decoration: underline;
 }
 .ts19 {
+  font-family: Tahoma;
+  color: Black;
+}
+.ts20 {
   font-family: Tahoma;
   font-weight: bold;
   color: Black;
 }
-.ts20 {
-  font-family: 'Courier New';
-  font-weight: bold;
-  color: #0070c0;
-}
 .ts21 {
   font-family: 'Courier New';
+  font-weight: bold;
   color: #0070c0;
 }
 .ts22 {
   font-family: 'Courier New';
-  font-weight: bold;
+  color: #0070c0;
 }
 .ts23 {
-  font-family: Tahoma;
-}
-.ts24 {
   font-family: 'Courier New';
   font-weight: bold;
-  color: #0080ff;
+}
+.ts24 {
+  font-family: Tahoma;
 }
 .ts25 {
   font-family: 'Courier New';
+  font-weight: bold;
   color: #0080ff;
 }
 .ts26 {
+  font-family: 'Courier New';
+  color: #0080ff;
+}
+.ts27 {
   font-family: Tahoma;
   font-weight: bold;
   color: Red;
 }
-.ts27 {
+.ts28 {
   font-family: 'Courier New';
   font-size: 12pt;
   font-weight: bold;
 }
-.ts28 {
+.ts29 {
   font-family: 'Courier New';
 }
 .ps0 {
