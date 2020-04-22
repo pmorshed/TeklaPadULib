@@ -34,7 +34,7 @@ map > area {
 .ts3 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #00b050;
+  color: #4bacc6;
 }
 .ts4 {
   font-family: Tahoma;
@@ -103,49 +103,54 @@ map > area {
 }
 .ts19 {
   font-family: Tahoma;
-  color: Black;
+  font-weight: bold;
+  color: #00b050;
 }
 .ts20 {
+  font-family: Tahoma;
+  color: Black;
+}
+.ts21 {
   font-family: Tahoma;
   font-weight: bold;
   color: Black;
 }
-.ts21 {
-  font-family: 'Courier New';
-  font-weight: bold;
-  color: #0070c0;
-}
 .ts22 {
   font-family: 'Courier New';
+  font-weight: bold;
   color: #0070c0;
 }
 .ts23 {
   font-family: 'Courier New';
-  font-weight: bold;
+  color: #0070c0;
 }
 .ts24 {
-  font-family: Tahoma;
-}
-.ts25 {
   font-family: 'Courier New';
   font-weight: bold;
-  color: #0080ff;
+}
+.ts25 {
+  font-family: Tahoma;
 }
 .ts26 {
   font-family: 'Courier New';
+  font-weight: bold;
   color: #0080ff;
 }
 .ts27 {
+  font-family: 'Courier New';
+  color: #0080ff;
+}
+.ts28 {
   font-family: Tahoma;
   font-weight: bold;
   color: Red;
 }
-.ts28 {
+.ts29 {
   font-family: 'Courier New';
   font-size: 12pt;
   font-weight: bold;
 }
-.ts29 {
+.ts30 {
   font-family: 'Courier New';
 }
 .ps0 {
