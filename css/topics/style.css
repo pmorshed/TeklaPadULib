@@ -81,77 +81,91 @@ map > area {
   font-weight: bold;
 }
 .ts15 {
+  font-family: 'Courier New';
+}
+.ts16 {
+  font-family: Tahoma;
+  text-decoration: underline;
+}
+.ts17 {
+  font-family: 'Courier New';
+  font-weight: bold;
+  color: Blue;
+}
+.ts18 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
 }
-.ts16 {
+.ts19 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
   color: #1f497d;
 }
-.ts17 {
+.ts20 {
   font-family: Tahoma;
   font-weight: bold;
   color: #7f7f7f;
 }
-.ts18 {
+.ts21 {
   font-family: Tahoma;
   font-weight: bold;
   text-decoration: underline;
 }
-.ts19 {
+.ts22 {
   font-family: Tahoma;
   font-weight: bold;
   color: #00b050;
 }
-.ts20 {
-  font-family: Tahoma;
-  color: Black;
-}
-.ts21 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: Black;
-}
-.ts22 {
-  font-family: 'Courier New';
-  font-weight: bold;
-  color: #0070c0;
-}
 .ts23 {
-  font-family: 'Courier New';
-  color: #0070c0;
+  font-family: Tahoma;
+  font-weight: bold;
+  color: #070c12;
 }
 .ts24 {
-  font-family: 'Courier New';
-  font-weight: bold;
+  font-family: Tahoma;
+  color: Black;
 }
 .ts25 {
   font-family: Tahoma;
+  font-weight: bold;
+  color: Black;
 }
 .ts26 {
   font-family: 'Courier New';
   font-weight: bold;
-  color: #0080ff;
+  color: #0070c0;
 }
 .ts27 {
   font-family: 'Courier New';
-  color: #0080ff;
+  color: #0070c0;
 }
 .ts28 {
+  font-family: 'Courier New';
+  font-weight: bold;
+}
+.ts29 {
+  font-family: Tahoma;
+}
+.ts30 {
+  font-family: 'Courier New';
+  font-weight: bold;
+  color: #0080ff;
+}
+.ts31 {
+  font-family: 'Courier New';
+  color: #0080ff;
+}
+.ts32 {
   font-family: Tahoma;
   font-weight: bold;
   color: Red;
 }
-.ts29 {
+.ts33 {
   font-family: 'Courier New';
   font-size: 12pt;
   font-weight: bold;
-}
-.ts30 {
-  font-family: 'Courier New';
 }
 .ps0 {
   font-size: 11pt;

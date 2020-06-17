@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Polybeam joiner</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?4d16057b"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 950;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Joining two picked polybeams.
+// ### Compatibility: TS18 or newer
+// ### Hint1: The order of selection matters.
+// ### Hint2: Converting Tolist() allows  indexing ([0], [1],...)
+// ### Hint3: In C#, An array index always starts from zero.
+// #############################################################
+
+Model m1 = new Model();
+//Storing picked polybeams. Press the middle mouse button to terminate the selection.
+var SelectedPolyBeams = m1.PickObjectsOfType&ltPolyBeam&gt();
+//Making sure that there are only two PolyBeams in selection set:
+if (SelectedPolyBeams != null && SelectedPolyBeams.Count() == 2)
+{
+	//According to Hint3, index 0 means first object:
+	PolyBeam FirstPolyBeam = SelectedPolyBeams[0];
+	//and index 1 means second object:
+	PolyBeam SecondPolyBeam = SelectedPolyBeams[1];
+	//Gathering points from second polybeam (Refer to Hint2):
+	var points2 = SecondPolyBeam.Contour.ContourPoints.OfType&ltContourPoint&gt().ToList();
+	//Adding second polyline's points to first one:
+	for (int i = 0; i &lt points2.Count(); i++)
+	{   
+		//Prevent from duplicate points:
+		if (!FirstPolyBeam.Contour.ContourPoints.Contains(points2[i]))
+		{
+			FirstPolyBeam.AddContourPoint(points2[i]);
+		}
+	}
+	SecondPolyBeam.Delete();
+	FirstPolyBeam.Modify();
+}
+//Updating the model view:
+m1.CommitChanges();
+//Passing nothing to data table:
+return null;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p><img width="412" height="313" border="0" src="images/polybeamjoinercommand.png" /></p>
+</body>
+</html>

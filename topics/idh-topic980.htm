@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Elliptical contour plate</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?4d16057b"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 980;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Creating an elliptical contour plate.
+// ### Compatibility: TS18 or newer
+// #############################################################
+
+Model m1 = new Model();
+ContourPlate cplate = new ContourPlate();
+var R1 = 3000;
+var R2 = 1500;
+for (int i = 0; i &lt 360; i += 10)
+{
+	var angle = (Math.PI * i) / 180;
+	var x = R1 * Math.Cos(angle);
+	var y = R2 * Math.Sin(angle);
+	Point p = new Point(x, y, 0);
+	ContourPoint cp = new ContourPoint(p, null);
+	cplate.Contour.AddContourPoint(cp);
+}
+cplate.Profile.ProfileString = "PL20";
+cplate.Insert();
+//Updating the model view:
+m1.CommitChanges();
+//Passing nothing to data table:
+return null;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p><img width="470" height="175" border="0" src="images/ellipticalcplatecommand.png" /></p>
+</body>
+</html>

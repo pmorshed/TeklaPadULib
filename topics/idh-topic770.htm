@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Tapered group exploder</title>
+<title>Solid to plates</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?6ca1f615"></script>
+<script type="text/javascript" src="../js/settings.js?4d16057b"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -44,26 +44,53 @@ pre {
 
 // #############################################################
 // ### Author: TeklaPad
-// ### Desc.: Tapered group exploder
+// ### Desc.: Converting solids to plates
 // ### Compatibility: TS18 or newer
 // #############################################################
 
-//Finding tapered rebar groups in selection:
-var TaperedRebarGroups = from r in Database.OfType&ltRebarGroup&gt()
-where r.GetTeklaReport("weight min") != r.GetTeklaReport("weight max")
-select r;
-//Ungrouping tapered rebar groups:        
-foreach (var item in TaperedRebarGroups)
+Model m1 = new Model();
+//Walking through database (selected objects) and filtering parts:
+foreach (var item in Database.OfType&ltPart&gt())
 {
-Operation.Ungrouping(item);
+	var solid = item.GetSolid() as Solid;
+	var faces = solid.GetFaceEnumerator().GetArray().OfType&ltFace&gt();
+	//Walking through solid faces:
+	foreach (var face in faces)
+	{
+		var loops = face.GetLoopEnumerator().GetArray().OfType&ltLoop&gt();
+		//Walking through face loops:
+		foreach (var loop in loops)
+		{
+			var vertices = loop.GetVertexEnumerator().GetArray().OfType&ltPoint&gt();
+			ContourPlate cp = new ContourPlate();
+			//Walking through loop vertices:
+			foreach (var point in vertices)
+			{
+				ContourPoint cpoint = new ContourPoint(point, null);
+				cp.AddContourPoint(cpoint);
+			}
+			//Defining plate properties:
+			cp.Profile.ProfileString = "PL10";
+			cp.Class = "3";
+			cp.Position.Depth = Position.DepthEnum.MIDDLE;
+			//Inserting plate for each face:
+			cp.Insert();
+		}
+	}
+	//Removing original part:
+	item.Delete();
 }
-//Redraw the view:	        
-new Model().CommitChanges();
-//There is no need to pass anything to gridview. So:	        
+//Updating the model view:
+m1.CommitChanges();
+//Passing nothing to data table:
 return null;
 
 </pre>
 </body>
 </html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p><img width="571" height="258" border="0" src="images/solid2platecommand.png" /></p>
 </body>
 </html>
