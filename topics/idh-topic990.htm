@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Trim/Extend beams</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?4887056c"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 990;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #########################################################################
+// ### Author: TeklaPad
+// ### Desc.: Trimming/extending secondary beams to main beam.
+// ### Compatibility: TS18 or newer
+// ### Hint1: Order of selection matters in "PickObjectsOfType" method 
+// ### Hint2: First picked beam will be considered as main beam
+// ### Hint3: Other picked beams will be considered as secondary beams
+// ### Hint4: The picking sequence is terminated by the middle button pick. 
+// #########################################################################
+
+Model m1 = new Model();
+var PickedObjects = m1.PickObjectsOfType&ltBeam&gt();
+if (PickedObjects.Count &gt= 2)
+{
+	//choosing first picked object as the main beam:
+	var MainBeam = PickedObjects[0];
+	var Xdist = MainBeam.StartPoint.X - MainBeam.EndPoint.X;
+	var Ydist = MainBeam.StartPoint.Y - MainBeam.EndPoint.Y;
+	var Vector1 = new Vector(Xdist, Ydist, 0);
+	var Plane1 = new GeometricPlane(MainBeam.StartPoint, Vector1, new Vector(0, 0, 1));
+	//Removing the first object from picked list (now it only contains secondary beams): 
+	PickedObjects.RemoveAt(0);
+
+	foreach (var SecondaryBeam in PickedObjects)
+	{
+		var IntersectPoint = Intersection.LineToPlane(new Line(SecondaryBeam.StartPoint, SecondaryBeam.EndPoint), Plane1);
+		var HelperLine = new Line(IntersectPoint, new Point(IntersectPoint.X, IntersectPoint.Y, IntersectPoint.Z + 100));
+		LineSegment Lineseg1 = Intersection.LineToLine(HelperLine, new Line(MainBeam.StartPoint, MainBeam.EndPoint));
+		var D1 = Distance.PointToPoint(SecondaryBeam.StartPoint, Lineseg1.Point1);
+		var D2 = Distance.PointToPoint(SecondaryBeam.EndPoint, Lineseg1.Point1);
+		//Modifying the handle that is closer to main part:
+		//Hint: if D1=D2 then both main and sec. beams are in parallel planes. 
+		if (D1 &lt D2)
+		{
+			SecondaryBeam.StartPoint = Lineseg1.Point1;
+			SecondaryBeam.Modify();
+		}
+		if (D1 &gt D2)
+		{
+			SecondaryBeam.EndPoint = Lineseg1.Point1;
+			SecondaryBeam.Modify();
+		}
+	}
+}
+m1.CommitChanges();
+//Passing tothing to gridview:
+return null;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p><img width="510" height="344" border="0" src="images/trimextendcommand.png" /></p>
+</body>
+</html>

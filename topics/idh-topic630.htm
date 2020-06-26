@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Extend</title>
+<title>Trim/Extend</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?a915d4e9"></script>
+<script type="text/javascript" src="../js/settings.js?4887056c"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -44,7 +44,7 @@ pre {
 
 // ####################################
 // ### Credits: Tekla Corporation
-// ### Desc.: Extend beams
+// ### Desc.: Trim/Extend beams
 // ####################################
 
 //Hint: Add the following Dlls to references:
@@ -55,7 +55,7 @@ pre {
 using System;
 using Tekla.Structures.Model;
 using Tekla.Structures.Geometry3d;
-using TS3D= Tekla.Structures.Geometry3d;
+using TS3GD = Tekla.Structures.Geometry3d;
 
 class MyClass
 {
@@ -73,9 +73,9 @@ class MyClass
 				Beam Beam1 = Pick1.PickObject(Tekla.Structures.Model.UI.Picker.PickObjectEnum.PICK_ONE_PART, Prompt1) as Beam;
 				double Xdist = Beam1.StartPoint.X - Beam1.EndPoint.X;
 				double Ydist = Beam1.StartPoint.Y - Beam1.EndPoint.Y;
-				TS3D.Vector Vector1 = new TS3D.Vector(Xdist, Ydist, 0);
+				TS3GD.Vector Vector1 = new TS3GD.Vector(Xdist, Ydist, 0);
 
-				TS3D.GeometricPlane Plane1 = new GeometricPlane(Beam1.StartPoint, Vector1, new TS3D.Vector(0, 0, 1));
+				TS3GD.GeometricPlane Plane1 = new GeometricPlane(Beam1.StartPoint, Vector1, new TS3GD.Vector(0, 0, 1));
 
 				ModelObjectEnumerator Beams = Pick1.PickObjects(Tekla.Structures.Model.UI.Picker.PickObjectsEnum.PICK_N_PARTS, Prompt2);
 
@@ -85,9 +85,10 @@ class MyClass
 					if (Beam2 != null)
 					{
 
-						TS3D.Point IntersectPoint = TS3D.Intersection.LineToPlane(new Line(Beam2.StartPoint, Beam2.EndPoint), Plane1);
-						TS3D.LineSegment Lineseg1 = TS3D.Intersection.LineToLine(new Line(IntersectPoint, new TS3D.Point(IntersectPoint.X, IntersectPoint.Y, IntersectPoint.Z + 100)), new Line(Beam1.StartPoint, Beam1.EndPoint));
-						if (TS3D.Distance.PointToPoint(Beam2.StartPoint, Lineseg1.Point1) <= TS3D.Distance.PointToPoint(Beam2.EndPoint, Lineseg1.Point1))
+						TS3GD.Point IntersectPoint = TS3GD.Intersection.LineToPlane(new Line(Beam2.StartPoint, Beam2.EndPoint), Plane1);
+						TS3GD.Line HelperLine = new Line(IntersectPoint, new TS3GD.Point(IntersectPoint.X, IntersectPoint.Y, IntersectPoint.Z + 100));
+						TS3GD.LineSegment Lineseg1 = TS3GD.Intersection.LineToLine(HelperLine, new Line(Beam1.StartPoint, Beam1.EndPoint));
+						if (TS3GD.Distance.PointToPoint(Beam2.StartPoint, Lineseg1.Point1) &lt= TS3GD.Distance.PointToPoint(Beam2.EndPoint, Lineseg1.Point1))
 						{
 							Beam2.StartPoint = Lineseg1.Point1;
 							Beam2.Modify();

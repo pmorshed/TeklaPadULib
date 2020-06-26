@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Polybeam joiner</title>
+<title>Swapping handles</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -20,7 +20,7 @@ body {
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
-	var topicContext = 950;
+	var topicContext = 1000;
 </script>
 </head>
 <body>
@@ -44,36 +44,23 @@ pre {
 
 // #############################################################
 // ### Author: TeklaPad
-// ### Desc.: Joining two picked polybeams.
+// ### Desc.: Swapping handles for all selected beams
 // ### Compatibility: TS18 or newer
-// ### Hint1: The order of selection matters.
-// ### Hint2: Converting Tolist() allows  indexing ([0], [1],...)
-// ### Hint3: In C#, An array index always starts from zero.
+// ### Hint: A very basic example to start
 // #############################################################
 
 Model m1 = new Model();
-//Storing picked polybeams. Press the middle mouse button to terminate the selection.
-var SelectedPolyBeams = m1.PickObjectsOfType&ltPolyBeam&gt();
-//Making sure that there are only two PolyBeams in selection set:
-if (SelectedPolyBeams != null && SelectedPolyBeams.Count() == 2)
+//Walking through beam/columns inside database (selection):
+foreach (var item in Database.OfType&ltBeam&gt())
 {
-	//According to Hint3, index 0 means first object:
-	PolyBeam FirstPolyBeam = SelectedPolyBeams[0];
-	//and index 1 means second object:
-	PolyBeam SecondPolyBeam = SelectedPolyBeams[1];
-	//Gathering points from second polybeam (Refer to Hint2):
-	var points2 = SecondPolyBeam.Contour.ContourPoints.OfType&ltContourPoint&gt().ToList();
-	//Adding second polyline's points to first one:
-	for (int i = 0; i &lt points2.Count(); i++)
-	{   
-		//Prevent from duplicate points:
-		if (!FirstPolyBeam.Contour.ContourPoints.Contains(points2[i]))
-		{
-			FirstPolyBeam.AddContourPoint(points2[i]);
-		}
-	}
-	SecondPolyBeam.Delete();
-	FirstPolyBeam.Modify();
+	//Getting current handles:
+	var SPoint = item.StartPoint;
+	var EPoint = item.EndPoint;
+	//Swapping handles:
+	item.StartPoint = EPoint;
+	item.EndPoint = SPoint;
+	//Modifying:
+	item.Modify();
 }
 //Updating the model view:
 m1.CommitChanges();
@@ -86,6 +73,6 @@ return null;
 <div>
   <div class="hline0"></div>
 </div>
-<p><img width="412" height="313" border="0" src="images/polybeamjoinercommand.png" /></p>
+<p><img width="170" height="180" border="0" src="images/swaphandlecommand.png" /></p>
 </body>
 </html>

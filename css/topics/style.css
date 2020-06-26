@@ -121,48 +121,58 @@ map > area {
 .ts23 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #070c12;
+  color: Black;
 }
 .ts24 {
   font-family: Tahoma;
-  color: Black;
+  font-weight: bold;
+  color: #070c12;
 }
 .ts25 {
+  font-family: Tahoma;
+  color: Black;
+}
+.ts26 {
   font-family: Tahoma;
   font-weight: bold;
   color: Black;
 }
-.ts26 {
-  font-family: 'Courier New';
-  font-weight: bold;
-  color: #0070c0;
-}
 .ts27 {
   font-family: 'Courier New';
+  font-weight: bold;
   color: #0070c0;
 }
 .ts28 {
   font-family: 'Courier New';
-  font-weight: bold;
+  color: #0070c0;
 }
 .ts29 {
-  font-family: Tahoma;
-}
-.ts30 {
   font-family: 'Courier New';
   font-weight: bold;
-  color: #0080ff;
+}
+.ts30 {
+  font-family: Tahoma;
 }
 .ts31 {
   font-family: 'Courier New';
+  font-weight: bold;
   color: #0080ff;
 }
 .ts32 {
+  font-family: 'Courier New';
+  color: #0080ff;
+}
+.ts33 {
+  font-family: 'Courier New';
+  text-decoration: underline;
+  color: #0080ff;
+}
+.ts34 {
   font-family: Tahoma;
   font-weight: bold;
   color: Red;
 }
-.ts33 {
+.ts35 {
   font-family: 'Courier New';
   font-size: 12pt;
   font-weight: bold;

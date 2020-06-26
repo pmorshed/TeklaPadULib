@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?a915d4e9"></script>
+<script type="text/javascript" src="../js/settings.js?4887056c"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -46,21 +46,33 @@ pre {
 // ### Author: TeklaPad
 // ### Desc.: Converting picked beams to polybeam
 // ### Compatibility: TS18 or newer
+// ### Hint1: Picking order affects the result.
+// ### Hint2: Swapping the beam handles can affect the result. 
 // #############################################################
 
 Model m1 = new Model();
-//Walking through database items(selected items) and filtering polybeams:
-foreach (var item in Database.OfType&ltPolyBeam&gt())
+//Storing picked beams. Press the middle mouse button to terminate the selection.
+var PickedBeams = m1.PickObjectsOfType&ltBeam&gt();
+PolyBeam pb = new PolyBeam();
+foreach (var item in PickedBeams)
 {
-	//Creating contour plate:
-	ContourPlate cplate = new ContourPlate();
-	cplate.Profile.ProfileString = "PL50";
-	cplate.Contour.ContourPoints = item.Contour.ContourPoints;
-	//Removing the polybeam:
+	ContourPoint cp1 = new ContourPoint(item.StartPoint, null);
+	ContourPoint cp2 = new ContourPoint(item.EndPoint, null);
+	//Prevent from duplicate points:
+	if (!pb.Contour.ContourPoints.Contains(cp1))
+	{
+		pb.AddContourPoint(cp1);
+	}
+	//Prevent from duplicate points:
+	if (!pb.Contour.ContourPoints.Contains(cp2))
+	{
+		pb.AddContourPoint(cp2);
+	}
 	item.Delete();
-	cplate.Insert();
 }
-//Updating the model view:
+pb.Profile.ProfileString = PickedBeams[0].Profile.ProfileString;
+pb.Class = PickedBeams[0].Class;
+pb.Insert();
 m1.CommitChanges();
 //Passing nothing to data table:
 return null;

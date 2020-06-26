@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?a915d4e9"></script>
+<script type="text/javascript" src="../js/settings.js?4887056c"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -117,7 +117,7 @@ class MyClass
 
 	private static bool SplitPolygonWeld(PolygonWeld polygonWeld)
 	{
-		if (polygonWeld != null && polygonWeld.Polygon.Points.Count > 1)
+		if (polygonWeld != null && polygonWeld.Polygon.Points.Count &gt 1)
 		{
 			var points = polygonWeld.Polygon.Points;
 
@@ -133,7 +133,7 @@ class MyClass
 			}
 
 			// Create copies of the original one for each segment
-			for (var i = 1; i < points.Count - 1; i++)
+			for (var i = 1; i &lt points.Count - 1; i++)
 			{
 				var polygonPoints = new ArrayList();
 				polygonPoints.Add(points[i]);
