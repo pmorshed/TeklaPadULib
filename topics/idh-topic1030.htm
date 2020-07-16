@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?76c7e2be"></script>
+<script type="text/javascript" src="../js/settings.js?96dc4399"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -42,15 +42,15 @@ pre {
 <body>
 <pre>
 
-// #############################################################
+// ##################################################################
 // ### Author: TeklaPad
-// ### Desc.: Removing some lines from entire drawing.
+// ### Desc.: Removing some lines (in Drawing Database)based on color
 // ### Compatibility: TS18 or newer
 // ### Hint: Make sure that your drawing is open.
-// #############################################################
+// ##################################################################
 
 var MyDrawing = new TSD.DrawingHandler().GetActiveDrawing();
-foreach (var item in EntireDrawing.OfType&ltTSD.Line&gt())
+foreach (var item in DrawingDatabase.OfType&ltTSD.Line&gt())
 {
 	//Condition:
 	if (item.Attributes.Line.Color == TSD.DrawingColors.Red)

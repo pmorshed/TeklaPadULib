@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Tapered group exploder</title>
+<title>Showing center lines only for some profiles</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -20,7 +20,7 @@ body {
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
-	var topicContext = 920;
+	var topicContext = 1060;
 </script>
 </head>
 <body>
@@ -42,24 +42,34 @@ pre {
 <body>
 <pre>
 
-// #############################################################
+// #####################################################################
 // ### Author: TeklaPad
-// ### Desc.: Tapered group exploder
+// ### Desc.: Showing center lines only for some profiles (UNP profiles)
 // ### Compatibility: TS18 or newer
-// #############################################################
+// ### Hint: Make sure that your drawing is open.
+// #####################################################################
 
-//Finding tapered rebar groups in selection:
-var TaperedRebarGroups = from r in Database.OfType&ltRebarGroup&gt()
-where r.GetTeklaReport("weight min") != r.GetTeklaReport("weight max")
-select r;
-//Ungrouping tapered rebar groups:        
-foreach (var item in TaperedRebarGroups)
+var MyDrawing = new TSD.DrawingHandler().GetActiveDrawing();
+foreach (var item in DrawingDatabase.OfType&ltTSD.Part&gt())
 {
-Operation.Ungrouping(item);
+	if (item.IsValidModelObjectOfType&ltBeam&gt())
+	{
+		var BeamInModel = item.GetModelObjectOfType&ltBeam&gt();
+		//Condition (only for U profiles):
+		if (BeamInModel.Profile.ProfileString.StartsWith("UNP"))
+		{
+			item.Attributes.DrawCenterLine = true;
+		}
+		else
+		{
+			item.Attributes.DrawCenterLine = false;
+		}
+		item.Modify();
+	}
 }
-//Redraw the view:	        
-new Model().CommitChanges();
-//There is no need to pass anything to gridview. So:	        
+//Updating the drawing view:
+MyDrawing.CommitChanges();
+//Passing nothing to the gridview:
 return null;
 
 </pre>

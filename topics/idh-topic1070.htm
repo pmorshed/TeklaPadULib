@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!-- saved from url=(0025)http://www.helpsmith.com/ -->
+<head>
+<title>Rebar bending schedule</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+<meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
+<style type="text/css" media="screen">
+html {
+  height: 100%;
+}
+body {
+  background-color: LemonChiffon;
+  margin: 0.06in 0.06in 0.06in 0.06in;
+}
+</style>
+<link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../js/settings.js?96dc4399"></script>
+<script type="text/javascript" src="../js/core.js?e3fa3091"></script>
+<script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
+<script type="text/javascript">
+	var topicContext = 1070;
+</script>
+</head>
+<body>
+<p class="ps0"><html>
+<style>
+pre {
+	width: 100%;
+	padding: 0;
+	color: #0066ff;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	font-size: 11px;
+	font-family: monospace;
+	line-height: 16px;
+	border: 1px solid #777;
+}
+</style>
+<body>
+<pre>
+
+// #############################################################
+// ### Author: TeklaPad
+// ### Desc.: Rebar bending schedule
+// ### Measurement units: Metric
+// ### Compatibility: TS18 or newer
+// ### Hint: Make sure that numbering of objects is up to date.
+// #############################################################
+
+var res = from n in Database.OfType&ltPart&gt()
+		  from Reinforcement r in n.GetReinforcements().GetArray()
+		  where r.IsGeometryValid()
+		  group r by r.GetTeklaReport("rebar pos") into g
+		  let Pos = g.Key
+		  let rebar = g.First()
+		  let Shape = rebar.GetTeklaPullOut(BendingAngle: false)
+		  let Spec = rebar.GetTeklaReport("size")
+		  let L_min = rebar.GetTeklaReport("length min") / 1000  //converting to meter
+		  let L_max = rebar.GetTeklaReport("length max") / 1000  //converting to meter
+		  let W_min = rebar.GetTeklaReport("weight min", 7)
+		  //Detecting tapered groups (returns true if Lmin != Lmax):  
+		  let IsTapered = (L_min != L_max)
+		  let L = IsTapered ? L_min + "~" + L_max : L_min
+		  let No = g.Sum(x =&gt x.GetTeklaReport("number"))
+		  let WeightPerUnitLength = W_min / L_min
+		  let W_Total = IsTapered ? Math.Round(g.Sum(x =&gt (double)x.GetTeklaReport("weight total", 6)), 5) : W_min * No
+		  let L_Total = IsTapered ? Math.Round(W_Total / WeightPerUnitLength, 3) : L_min * No
+		  //Defining existing rebar sizes (based on your project):
+		  let T8 = Spec == "8" ? L_Total : "-"
+		  let T10 = Spec == "10" ? L_Total : "-"
+		  let T12 = Spec == "12" ? L_Total : "-"
+		  let T14 = Spec == "14" ? L_Total : "-"
+		  let T16 = Spec == "16" ? L_Total : "-"
+		  let T18 = Spec == "18" ? L_Total : "-"
+		  let T20 = Spec == "20" ? L_Total : "-"
+		  let T22 = Spec == "22" ? L_Total : "-"
+		  let T25 = Spec == "25" ? L_Total : "-"
+		  //Hint: You can hide unused rebar sizes in data table (right-click on header&gt Hide column) 	      
+		  select new { Pos, Shape, L, No, T8, T10, T12, T14, T16, T18, T20, T22, T25 };
+return res;
+
+</pre>
+</body>
+</html></p>
+<div>
+  <div class="hline0"></div>
+</div>
+<p class="ps0"><span class="ts12">Usage:</span></p>
+<p><img width="355" height="333" border="0" src="images/image(71).png" /></p>
+</body>
+</html>
