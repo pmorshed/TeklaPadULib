@@ -33,24 +33,22 @@ map > area {
 }
 .ts3 {
   font-family: Tahoma;
-  font-weight: bold;
-  color: #4bacc6;
 }
 .ts4 {
   font-family: Tahoma;
+  font-weight: bold;
+  color: Red;
 }
 .ts5 {
   font-family: Tahoma;
-  font-weight: bold;
+  text-decoration: underline;
 }
 .ts6 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: #1f497d;
+  font-family: 'Courier New';
+  font-size: 10pt;
 }
 .ts7 {
   font-family: Tahoma;
-  font-weight: bold;
 }
 .ts8 {
   font-family: Tahoma;
@@ -59,123 +57,145 @@ map > area {
 .ts9 {
   font-family: Tahoma;
   font-weight: bold;
-  color: Red;
+  color: #1f497d;
 }
 .ts10 {
   font-family: Tahoma;
+  font-weight: bold;
 }
 .ts11 {
   font-family: Tahoma;
+  font-weight: bold;
 }
 .ts12 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #0070c0;
+  color: Red;
 }
 .ts13 {
   font-family: Tahoma;
-  font-size: 11pt;
 }
 .ts14 {
   font-family: Tahoma;
   font-weight: bold;
+  color: #0070c0;
 }
 .ts15 {
-  font-family: 'Courier New';
+  font-family: Tahoma;
+  font-size: 11pt;
 }
 .ts16 {
   font-family: Tahoma;
-  text-decoration: underline;
+  font-weight: bold;
 }
 .ts17 {
+  font-family: 'Courier New';
+}
+.ts18 {
+  font-family: Tahoma;
+  text-decoration: underline;
+}
+.ts19 {
   font-family: 'Courier New';
   font-weight: bold;
   color: Blue;
 }
-.ts18 {
+.ts20 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
 }
-.ts19 {
+.ts21 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
   color: #1f497d;
 }
-.ts20 {
+.ts22 {
   font-family: Tahoma;
   font-weight: bold;
   color: #7f7f7f;
 }
-.ts21 {
+.ts23 {
   font-family: Tahoma;
   font-weight: bold;
   text-decoration: underline;
 }
-.ts22 {
+.ts24 {
   font-family: Tahoma;
   font-weight: bold;
   color: #00b050;
 }
-.ts23 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: Black;
-}
-.ts24 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: #070c12;
-}
 .ts25 {
   font-family: Tahoma;
+  font-weight: bold;
   color: Black;
 }
 .ts26 {
   font-family: Tahoma;
   font-weight: bold;
-  color: Black;
+  color: #070c12;
 }
 .ts27 {
-  font-family: 'Courier New';
-  font-weight: bold;
-  color: #0070c0;
+  font-family: Tahoma;
+  color: Black;
 }
 .ts28 {
-  font-family: 'Courier New';
-  color: #0070c0;
+  font-family: Tahoma;
+  font-weight: bold;
+  color: Black;
 }
 .ts29 {
   font-family: 'Courier New';
   font-weight: bold;
+  color: #0070c0;
 }
 .ts30 {
-  font-family: Tahoma;
+  font-family: 'Courier New';
+  color: #0070c0;
 }
 .ts31 {
   font-family: 'Courier New';
   font-weight: bold;
-  color: #0080ff;
 }
 .ts32 {
+  font-family: Tahoma;
+}
+.ts33 {
+  font-family: 'Courier New';
+  font-weight: bold;
+  color: #0080ff;
+}
+.ts34 {
   font-family: 'Courier New';
   color: #0080ff;
 }
-.ts33 {
+.ts35 {
   font-family: 'Courier New';
   text-decoration: underline;
   color: #0080ff;
 }
-.ts34 {
+.ts36 {
   font-family: Tahoma;
   font-weight: bold;
   color: Red;
 }
-.ts35 {
+.ts37 {
   font-family: 'Courier New';
   font-size: 12pt;
   font-weight: bold;
+}
+.hs0 {
+  font-family: Tahoma;
+  font-weight: bold;
+  text-decoration: underline;
+  color: Blue;
+}
+.hs1 {
+  font-family: Tahoma;
+  font-weight: bold;
+  text-decoration: underline;
+  color: Blue;
 }
 .ps0 {
   font-size: 11pt;
@@ -184,6 +204,13 @@ map > area {
   font-size: 9pt;
 }
 .ps2 {
+  text-align: center;
+}
+.ps3 {
+  text-align: center;
+  font-size: 11pt;
+}
+.ps4 {
   font-size: 10pt;
 }
 .hline0 {
@@ -220,16 +247,34 @@ map > area {
   border-style: none;
 }
 .tbl0 > tbody > tr > td.cell3 {
-  width: 183.75pt;
+  width: 124.5pt;
+  height: 22px;
   vertical-align: top;
   border-style: none;
 }
 .tbl0 > tbody > tr > td.cell4 {
+  width: 7.2in;
+  height: 22px;
+  vertical-align: middle;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell5 {
+  width: 7.5pt;
+  height: 22px;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell6 {
+  width: 183.75pt;
+  vertical-align: top;
+  border-style: none;
+}
+.tbl0 > tbody > tr > td.cell7 {
   width: 252.75pt;
   vertical-align: top;
   border-style: none;
 }
-.tbl0 > tbody > tr > td.cell5 {
+.tbl0 > tbody > tr > td.cell8 {
   width: 119.25pt;
   vertical-align: top;
   border-style: none;
