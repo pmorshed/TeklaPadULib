@@ -62,11 +62,12 @@ map > area {
 }
 .ts10 {
   font-family: Tahoma;
+  font-weight: bold;
+  color: #1f497d;
 }
 .ts11 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #1f497d;
 }
 .ts12 {
   font-family: Tahoma;
@@ -75,11 +76,10 @@ map > area {
 .ts13 {
   font-family: Tahoma;
   font-weight: bold;
+  color: Red;
 }
 .ts14 {
   font-family: Tahoma;
-  font-weight: bold;
-  color: Red;
 }
 .ts15 {
   font-family: Tahoma;
@@ -318,40 +318,36 @@ map > area {
 }
 .ps3 {
   padding-left: 30px;
-  font-size: 11pt;
 }
 .ps4 {
-  padding-left: 30px;
-}
-.ps5 {
   padding-right: 5px;
   padding-left: 5px;
   line-height: 1.2;
   font-size: 9pt;
 }
-.ps6 {
+.ps5 {
   font-size: 8pt;
 }
-.ps7 {
+.ps6 {
   line-height: 1.25;
   font-size: 11pt;
 }
-.ps8 {
+.ps7 {
   padding-left: 20px;
 }
-.ps9 {
+.ps8 {
   padding-left: 20px;
   font-size: 11pt;
 }
-.ps10 {
+.ps9 {
   padding-left: 10px;
   font-size: 11pt;
 }
-.ps11 {
+.ps10 {
   padding-left: 50px;
   font-size: 10pt;
 }
-.ps12 {
+.ps11 {
   padding-left: 10px;
 }
 .block0 {
