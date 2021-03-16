@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,73 +24,28 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Cast unit rebars with pull-out picture by pos
-// ### Compatibility: TS18 or newer
-// ### Hint: Make sure that numbering of objects is up to date.
-// #############################################################
-
-//Walking through database items(selected items) and filtering "Assemblies":
-var result = from a in Database.OfType&ltAssembly&gt()
-//Filtering cast units:
-where a.GetTeklaReport("material type") == "CONCRETE"
-from Part p in a.PartList()
-from Reinforcement r in p.GetReinforcements().GetArray()
-//Removing strands:
-where r.GetType().Name != "RebarStrand" && r.IsGeometryValid()
-//Grouping by rebar pos:
-group r by new { key1 = r.GetTeklaReport("rebar pos"), key2 = r.GetTeklaReport("grade") }  into g
-let rebar = g.First()
-//-------Temporary variable(Returns "true" for tapered groupes-----
-let IsTapered = rebar.GetTeklaReport("length min") != rebar.GetTeklaReport("length max")
-//-----------------------------------------------------------------
-//Defining required columns:
-let Size = rebar.GetTeklaReport("size")
-let Pos = g.Key.key1
-let Grade = g.Key.key2
-let Shape = rebar.GetTeklaReport("shape")
-let Pcs = g.Sum(x => x.GetNumberOfRebars()) //or g.Sum(x => x.GetTeklaReport("number"))
-let Unitlength = IsTapered==true ? "VAR" : rebar.GetTeklaReport("length")
-let UnitWeight = IsTapered==true ? "VAR" : rebar.GetTeklaReport("weight")
-//Hint: It's recommended to use "WEIGHT_TOTAL_IN_GROUP" attribute instead of "WEIGHT_TOTAL" in newer versions of Tekla
-let TotalWeight = IsTapered==true ? g.Sum(x => (double)x.GetTeklaReport("weight total", 6)) : UnitWeight*Pcs
-let TotalLength = IsTapered? Math.Round(TotalWeight*rebar.GetTeklaReport("length",7)/rebar.GetTeklaReport("weight",7),3) : Unitlength*Pcs
-//Hint: Make sure that rebar numbers are up to date while using "GetTeklaPullOut" method.
-let pic = rebar.GetTeklaPullOut()
-//Selecting a new table (from orginal database) with required columns:
-select new { Pos, Size, Grade, Shape, Pcs, Unitlength, TotalLength, UnitWeight, TotalWeight, pic };
-//Passing the final result to the gridview:
-return result;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Cast-unit rebars with pull-out picture by pos.</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span><br /><span class="ts17">//## Hint:</span><span class="ts25">&nbsp;Make sure that numbering of objects is up to date. </span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Walking through database items(selected items) and filtering &quot;Assemblies&quot;:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;result = </span><span class="ts21">from</span><span class="ts22">&nbsp;a </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Assembly&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">from</span><span class="ts22">&nbsp;Part p </span><span class="ts21">in</span><span class="ts22">&nbsp;a.PartList()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">from</span><span class="ts22">&nbsp;Reinforcement r </span><span class="ts21">in</span><span class="ts22">&nbsp;p.GetReinforcements().GetArray()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Removing strands&nbsp;and invalid shapes:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">where</span><span class="ts22">&nbsp;r.GetType().Name != </span><span class="ts23">&quot;RebarStrand&quot;</span><span class="ts22">&nbsp;&amp;&amp; r.IsGeometryValid()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Grouping by rebar pos and grade:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;key1 = r.GetTeklaReport(</span><span class="ts23">&quot;rebar pos&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;key2 = r.GetTeklaReport(</span><span class="ts23">&quot;grade&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">group</span><span class="ts22">&nbsp;r </span><span class="ts21">by</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ key1, key2 } </span><span class="ts21">into</span><span class="ts22">&nbsp;g</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;rebar = g.First()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//-----------------------------------------------------------------</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required columns:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Size = rebar.GetTeklaReport(</span><span class="ts23">&quot;size&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Pos = g.Key.key1</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Grade = g.Key.key2</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Shape = rebar.GetTeklaReport(</span><span class="ts23">&quot;shape&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Pcs = g.Sum(x =&gt; x.GetNumberOfRebars()) </span><span class="ts20">//or g.Sum(x =&gt; x.GetTeklaReport(&quot;number&quot;))</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Unitlength = rebar.IsTapered() ? </span><span class="ts23">&quot;VAR&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;length&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;UnitWeight = rebar.IsTapered() ? </span><span class="ts23">&quot;VAR&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;weight&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;TotalWeight = g.Sum(x =&gt; x.WeightInGroup(5)) </span><span class="ts20">//Precision: 5</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;TotalLength = g.Sum(x =&gt; x.LengthInGroup(5)) </span><span class="ts20">//Precision: 5</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;pic = rebar.GetTeklaPullOut()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ Pos, Size, Grade, Shape, Pcs, Unitlength, TotalLength, UnitWeight, TotalWeight, pic };</span><br /><span class="ts20">//Passing the final result to the data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;result;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="570" height="238" border="0" src="images/image(44).png" /></p>
-<p class="ps0"><span class="ts7">&nbsp;</span></p>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="570" height="257" border="0" src="images/image(45).png" /></p>
 </body>
 </html>

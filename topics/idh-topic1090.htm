@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Point list</title>
+<title>Simplified Templates</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,46 +24,26 @@ body {
 </script>
 </head>
 <body>
-<p><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #################################################################
-// ### Author: TeklaPad
-// ### Desc.: Getting XYZ coordinates from selected points in model.
-// ### Compatibility: TS21.1 or newer
-// #################################################################
-
-var PointList = from n in Database.OfType&ltControlPoint&gt()
-let x = n.Point.X
-let y = n.Point.Y
-let z = n.Point.Z
-let z2 = Math.Round(n.Point.Z, 2)
-//Hint: You can also define precision.Example: let z = Math.Round(n.Point.Z, 2)
-select new { x, y, z };
-return PointList;
-
-</pre>
-</body>
-</html></p>
-<div>
-  <div class="hline0"></div>
+<div align="center">
+  <table class="tbl0">
+    <tr class="row0">
+      <td class="cell0">
+        <p><img width="160" height="155" border="0" src="images/plgv2.png" /></p>
+      </td>
+      <td class="cell1">
+        <p class="ps0"><span class="ts2">Simplified Plug-in Templates.</span></p>
+        <p class="ps6"><span class="ts62">Based on Tekla OpenAPI Startup Package</span></p>
+        <p>&nbsp;</p>
+        <p class="ps4"><span class="ts11">Paste the template to second tab of TeklaPad (C# Console) and follow the </span><a href="idh-topic90.htm#SbySPlugin" class="hs1">procedure</a><span class="ts11">&nbsp;for creating and adding the plug-in to Tekla Structures. </span></p>
+      </td>
+      <td class="cell2" colspan="2">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+      </td>
+    </tr>
+  </table>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
-<p><img width="453" height="127" border="0" src="images/image(72).png" /></p>
+<p>&nbsp;</p>
 </body>
 </html>

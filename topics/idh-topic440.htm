@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,64 +24,25 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Cast unit by pos
-// ### Compatibility: TS18 or newer
-// ### Measurement units: Metric
-// ### Hint: Make sure that numbering of objects is up to date.
-// #############################################################
-
-//Walking through database items(selected items) and filtering "Assemblies":
-var query = from n in Database.OfType&ltAssembly&gt()
-//Filtering cast units:
-where n.GetTeklaReport("material type") == "CONCRETE"
-//Grouping by cast unit position number:
-let CU_POS = n.GetTeklaReport("cast unit pos")
-group n by CU_POS into g
-//Defining required columns:
-let Pos = g.Key
-let No = g.Count()
-let Name = g.First().GetTeklaReport("cast unit name")
-let Material = g.First().GetTeklaReport("material")
-let RebarWeightInCU = g.First().GetTeklaReport("cast unit rebar weight", 4)
-let CU_Type = g.First().GetTeklaReport("cast unit type")
-//Converting from from mm3 to m3:
-let CU_Volume = Math.Round(g.First().GetTeklaReport("volume net", 9) / 1000000000, 3)
-//Converting from Kg to Ton:
-let CU_Weight = g.First().GetTeklaReport("weight", 4) / 1000
-let Vol_Tot = CU_Volume * No
-let W_Tot = CU_Weight * No
-//Selecting a new table (from orginal database) with required columns:
-select new { Pos, No, Name, Material, CU_Type, RebarWeightInCU, CU_Volume, CU_Weight, Vol_Tot, W_Tot };
-//Passing the final result to the gridview:
-return query;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Cast-unit by pos.</span><br /><span class="ts17">//## Measurement units:</span><span class="ts25">&nbsp;Metric </span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span><br /><span class="ts17">//## Hint:</span><span class="ts25">&nbsp;Make sure that numbering of objects is up to date. </span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Walking through database items(selected items) and filtering &quot;Assemblies&quot;:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;query = </span><span class="ts21">from</span><span class="ts22">&nbsp;n </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Assembly&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Grouping by cast unit position number:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;CU_POS = n.GetTeklaReport(</span><span class="ts23">&quot;cast unit pos&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">group</span><span class="ts22">&nbsp;n </span><span class="ts21">by</span><span class="ts22">&nbsp;CU_POS </span><span class="ts21">into</span><span class="ts22">&nbsp;g</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Keeping one instance (first one) from each group of data:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;cunit = g.First()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required columns:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Pos = g.Key</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;No = g.Count()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Name = cunit.GetTeklaReport(</span><span class="ts23">&quot;cast unit name&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Material = cunit.GetTeklaReport(</span><span class="ts23">&quot;material&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;RebarWeightInCU = cunit.GetTeklaReport(</span><span class="ts23">&quot;cast unit rebar weight&quot;</span><span class="ts22">, 4)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;CU_Type = cunit.GetTeklaReport(</span><span class="ts23">&quot;cast unit type&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Converting from mm3 to m3 and rounding after conversion:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;CU_Volume = Math.Round(cunit.GetTeklaReport(</span><span class="ts23">&quot;volume net&quot;</span><span class="ts22">, 9) / 1000000000, 3)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Converting from Kg to Ton:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;CU_Weight = cunit.GetTeklaReport(</span><span class="ts23">&quot;weight&quot;</span><span class="ts22">, 4) / 1000</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Vol_Tot = CU_Volume * No</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;W_Tot = CU_Weight * No</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ Pos, No, Name, Material, CU_Type, RebarWeightInCU, CU_Volume, CU_Weight, Vol_Tot, W_Tot };</span><br /><span class="ts20">//Passing the final result to the data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;query;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="650" height="116" border="0" src="images/image(37).png" /></p>
 </body>
 </html>

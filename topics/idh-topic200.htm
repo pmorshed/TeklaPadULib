@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,60 +24,25 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;	
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Beam coordination list
-// ### Compatibility: TS18 or newer
-// #############################################################
-
-//Walking through database items(selected items) and filtering "Parts":
-var query = from n in Database.OfType&ltPart&gt()
-//Filtering Beams and PolyBeams:
-where n is Beam || n is PolyBeam 
-//Hint>> Another method:
-//where n.GetType().Name=="Beam" || n.GetType().Name=="PolyBeam"
-
-//Defining required columns:
-let Start_X = n.GetTeklaReport("start x")
-let Start_Y = n.GetTeklaReport("start y")
-let StartZ = n.GetTeklaReport("start z")
-let End_X= n.GetTeklaReport("end x")
-let End_Y = n.GetTeklaReport("end y")
-let End_Z= n.GetTeklaReport("end z")
-let PartType= n.GetType().Name
-let PartPos = n.GetTeklaReport("part pos")
-
-//Selecting a new table (from orginal database) with required columns: 
-select new {PartPos, PartType, Start_X, Start_Y,StartZ, End_X, End_Y, End_Z};
-
-//Passing the final result to the gridview:
-return query;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Beam coordination list</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Walking through database items(selected items) and filtering &quot;Beams&quot;:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;query = </span><span class="ts21">from</span><span class="ts22">&nbsp;n </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Beam&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Filtering properties (removing strip footings,...):</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">where</span><span class="ts22">&nbsp;(n.Type == Beam.BeamTypeEnum.BEAM) || (n.Type == Beam.BeamTypeEnum.COLUMN)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required columns:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Start_X = n.StartPoint.X</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Start_Y = n.StartPoint.Y</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;StartZ = n.StartPoint.Z</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;End_X = n.EndPoint.X</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;End_Y = n.EndPoint.Y</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;End_Z = n.EndPoint.Z</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;PartPos = n.GetTeklaReport(</span><span class="ts23">&quot;part pos&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ PartPos, Start_X, Start_Y, StartZ, End_X, End_Y, End_Z };</span><br /><span class="ts20">//Passing the final result to the data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;query;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
-<p><img width="550" height="133" border="0" src="images/image(9).png" /></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
+<p><img width="543" height="133" border="0" src="images/coordsv2.png" /></p>
 </body>
 </html>

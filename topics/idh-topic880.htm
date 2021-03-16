@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,54 +24,25 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Converting all selected "Texts" to uppercase
-// ### Compatibility: TS18 or newer
-// ### Hint: Make sure that your drawing is open.
-// #############################################################
-
-var MyDrawing = new TSD.DrawingHandler().GetActiveDrawing();
-
-//Filtering "Text" objects in DrawingDatabase items:
-var AllTexts = DrawingDatabase.OfType&ltTSD.Text&gt();
-//Walking through created collection:
-foreach (var item in AllTexts)
-{
-//Converting each item to uppercase:
-item.TextString = item.TextString.ToUpper();
-item.Modify();
-}
-//Updating the drawing view:
-MyDrawing.CommitChanges();
-//Passing nothing to the gridview:
-return null;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Converting all selected &quot;Texts&quot; to uppercase.</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span><br /><span class="ts18">//## Hint:</span><span class="ts19">&nbsp;</span><span class="ts25">Make sure that your drawing is open. </span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts21">var</span><span class="ts22">&nbsp;MyDrawing = </span><span class="ts21">new</span><span class="ts22">&nbsp;TSD.DrawingHandler().GetActiveDrawing();</span><br /><br /><span class="ts20">//Filtering &quot;Text&quot; objects in DrawingDatabase items:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;AllTexts = DrawingDatabase.OfType&lt;TSD.Text&gt;();</span><br /><span class="ts20">//Walking through created collection:</span><br /><span class="ts21">foreach</span><span class="ts22">&nbsp;(var item </span><span class="ts21">in</span><span class="ts22">&nbsp;AllTexts)</span><br /><span class="ts22">{</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Converting each item to uppercase:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; item.TextString = item.TextString.ToUpper();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; item.Modify();</span><br /><span class="ts22">}</span><br /><span class="ts20">//Updating the drawing view:</span><br /><span class="ts22">MyDrawing.CommitChanges();</span><br /><span class="ts20">//Passing nothing to the data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;</span><span class="ts21">null</span><span class="ts22">;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="391" height="275" border="0" src="images/image(69).png" /></p>
 <p>&nbsp;</p>
 </body>

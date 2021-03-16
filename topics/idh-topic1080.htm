@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,61 +24,21 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #########################################################################
-// ### Author: TeklaPad
-// ### Desc.: Scaling contour plates.
-// ### Compatibility: TS18 or newer 
-// #########################################################################
-
-//Defining a scale factor. For example:
-var scale = 1.3;
-//Walking through database items (selected items) and filtering contour plates:        
-foreach (var item in Database.OfType&ltContourPlate&gt())
-{
-	//Storing each plate's initial location:
-	var X0 = item.GetTeklaReport("cog x");
-	var Y0 = item.GetTeklaReport("cog y");
-	var Z0 = item.GetTeklaReport("cog z");
-	//Walking through each plate's point list:
-	var PointList = item.Contour.ContourPoints.OfType&ltPoint&gt();
-	foreach (var point in PointList)
-	{
-		//Applying the scale factor:
-		point.X = point.X * scale;
-		point.Y = point.Y * scale;
-		point.Z = point.Z * scale;
-	}
-	item.Modify();
-	//Moving the modifided plate to initial location: 
-	var TranslationVector = new Vector(X0 * (1 - scale), Y0 * (1 - scale), Z0 * (1 - scale));
-	Operation.MoveObject(item, TranslationVector);
-}
-//Updating model view:
-new Model().CommitChanges();
-//Passing nothing to data table:
-return null;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts25">&nbsp;Scaling contour plates</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Defining a scale factor. For example:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;scale = 1.3;</span><br /><span class="ts20">//Walking through database items (selected items) and filtering contour plates:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><br /><span class="ts21">foreach</span><span class="ts22">&nbsp;(var item </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;ContourPlate&gt;())</span><br /><span class="ts22">{</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Storing each plate's initial location:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">var</span><span class="ts22">&nbsp;X0 = item.GetTeklaReport(</span><span class="ts23">&quot;cog x&quot;</span><span class="ts22">, 3); </span><span class="ts20">//Precision:3</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">var</span><span class="ts22">&nbsp;Y0 = item.GetTeklaReport(</span><span class="ts23">&quot;cog y&quot;</span><span class="ts22">, 3); </span><span class="ts20">//Precision:3</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">var</span><span class="ts22">&nbsp;Z0 = item.GetTeklaReport(</span><span class="ts23">&quot;cog z&quot;</span><span class="ts22">, 3); </span><span class="ts20">//Precision:3</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Walking through each plate's point list:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">var</span><span class="ts22">&nbsp;PointList = item.Contour.ContourPoints.OfType&lt;Point&gt;();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">foreach</span><span class="ts22">&nbsp;(var point </span><span class="ts21">in</span><span class="ts22">&nbsp;PointList)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Applying the scale factor:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point.X = point.X * scale;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point.Y = point.Y * scale;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point.Z = point.Z * scale;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; item.Modify();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Moving the modifided plate to initial location: </span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">var</span><span class="ts22">&nbsp;TranslationVector = </span><span class="ts21">new</span><span class="ts22">&nbsp;Vector(X0 * (1 - scale), Y0 * (1 - scale), Z0 * (1 - scale));</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; Operation.MoveObject(item, TranslationVector);</span><br /><span class="ts22">}</span><br /><span class="ts20">//Updating model view:</span><br /><span class="ts21">new</span><span class="ts22">&nbsp;Model().CommitChanges();</span><br /><span class="ts20">//Passing nothing to data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;</span><span class="ts21">null</span><span class="ts22">;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>

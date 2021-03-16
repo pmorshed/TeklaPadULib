@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Splice plugin</title>
+<title>Splice plugin (INP UI)</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,306 +24,30 @@ body {
 </script>
 </head>
 <body>
-<p><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// ####################################
-// ### Credits: Tekla Corporation
-// ### Desc.: Splice plugin
-// ####################################
-
-//Hint: Add the following Dlls to references:
-//"Tekla.Structures.dll"
-//"Tekla.Structures.Model.dll"
-//"Tekla.Structures.Plugins.dll"
-//Location: ~\[version]\nt\bin\plugins
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using Tekla.Structures.Model;
-using Tekla.Structures.Model.UI;
-using Tekla.Structures.Plugins;
-using TSM = Tekla.Structures.Model;
-using Point = Tekla.Structures.Geometry3d.Point;
-using Tekla.Structures.Geometry3d;
-
-namespace Tekla.Samples.SplicePlugin
-{
-    public class StructuresData
-    {
-        [Tekla.Structures.Plugins.StructuresField("P1")]
-        public double Parameter1;
-    }
-
-    [Plugin("SplicePlugin")] // obligatory
-    [PluginUserInterface(SplicePlugin.UserInterfaceDefinitions.Plugin1)]
-    public class SplicePlugin : PluginBase
-    {
-        private StructuresData _data;
-
-        private TSM.Model _model;
-        private static readonly double EPSILON = 0.05;          //Tolerance
-        private static readonly double GAP_LENGTH = 5.0;        //Gap between beams
-        private static readonly double BEAM_LENGTH = 3000.0;    //Beam length
-
-        //Constructor
-        public SplicePlugin(StructuresData data)
-        {
-            this._data = data;
-            _model = new TSM.Model();
-        }
-
-        //Picks the points from the UI
-        public override List&ltInputDefinition&gt DefineInput()
-        {
-            Picker BeamPicker = new Picker();
-            List&ltInputDefinition&gt PointList = new List&ltInputDefinition&gt();
-
-            Point Point1 = BeamPicker.PickPoint();
-            Point Point2 = BeamPicker.PickPoint();
-
-            InputDefinition Input1 = new InputDefinition(Point1);
-            InputDefinition Input2 = new InputDefinition(Point2);
-            PointList.Add(Input1);
-            PointList.Add(Input2);
-
-            return PointList;
-        }
-
-        //Creates connection between two beams. The connection consists of two plates and two bolt arrays.
-        private void CreateSpliceConnection(ref ArrayList Parts)
-        {
-            TransformationPlane originalTransformationPlane = _model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
-            double webThickness = 0.0;
-            double edgeDistance = 0.0;
-            double plateHeight = 0.0;
-            double beamHeight = 0.0;
-            double flangeHeight = 0.0;
-            double innerRoundingRadius = 0.0;
-            double innerMargin = 5.0;
-            Beam previousBeam = new Beam();
-            bool first = true;
-            double beamLength = _data.Parameter1;
-
-            // Loops through all the beams that have to be created between the two points
-            foreach(Beam beam in Parts)
-            {
-                // In the first beam no connection is created, connections are always created after the first beam 
-                if(first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    // Don't create connection after last part (beam)
-                    if(Parts.IndexOf(beam) < (Parts.Count))
-                    {
-                        // First get the essential dimensions from the beam
-                        if(beam.GetReportProperty("PROFILE.WEB_THICKNESS", ref webThickness) &&
-                            beam.GetReportProperty("PROFILE.HEIGHT", ref beamHeight) &&
-                            beam.GetReportProperty("PROFILE.FLANGE_THICKNESS", ref flangeHeight))
-                        {
-                            //Creates plates on both sides of the beam.
-                            #region Create the Plates
-
-                            Beam plate1 = new Beam();
-                            Beam plate2 = new Beam();
-
-                            // And then the optionals if they exist
-                            beam.GetReportProperty("PROFILE.ROUNDING_RADIUS_1", ref innerRoundingRadius);
-                            edgeDistance = (flangeHeight + innerRoundingRadius + innerMargin);
-                            plateHeight = beamHeight - 2 * edgeDistance;
-
-                            CoordinateSystem coordSys = previousBeam.GetCoordinateSystem();
-                            _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(new TransformationPlane(coordSys));
-
-                            plate1.Position.Depth = plate2.Position.Depth = Position.DepthEnum.MIDDLE;
-                            plate1.Position.Rotation = plate2.Position.Rotation = Position.RotationEnum.FRONT;
-                            plate1.StartPoint = new Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + edgeDistance, webThickness);
-                            plate1.EndPoint = new Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + beamHeight - edgeDistance, webThickness);
-                            plate2.StartPoint = new Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + edgeDistance, -webThickness);
-                            plate2.EndPoint = new Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + beamHeight - edgeDistance, -webThickness);
-
-                            plate1.Profile.ProfileString = plate2.Profile.ProfileString = "PL" + (int)webThickness + "*300";
-                            plate1.Finish = plate2.Finish = "PAINT";
-
-                            plate1.Insert();
-                            plate2.Insert();
-
-                            #endregion
-
-                            //Creates two boltArrays to connect the plates
-                            #region Create the BoltArray
-
-                            _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(new TransformationPlane(plate1.GetCoordinateSystem()));
-                            BoltArray B = new BoltArray();
-
-                            B.PartToBoltTo = previousBeam;
-                            B.PartToBeBolted = plate1;
-                            B.AddOtherPartToBolt(plate2);
-                            B.AddOtherPartToBolt(beam);
-
-                            B.FirstPosition = new Point(0.0, 0.0, 0.0);
-                            B.SecondPosition = new Point(plateHeight, 0.0, 0.0);
-
-                            B.BoltSize = 16;
-                            B.Tolerance = 3.00;
-                            B.BoltStandard = "7990";
-                            B.BoltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP;
-                            B.CutLength = 105;
-
-                            B.Length = 100;
-                            B.ExtraLength = 15;
-                            B.ThreadInMaterial = BoltGroup.BoltThreadInMaterialEnum.THREAD_IN_MATERIAL_NO;
-
-                            B.Position.Depth = Position.DepthEnum.MIDDLE;
-                            B.Position.Plane = Position.PlaneEnum.MIDDLE;
-                            B.Position.Rotation = Position.RotationEnum.FRONT;
-
-                            B.Bolt = true;
-                            B.Washer1 = B.Washer2 = B.Washer3 = true;
-                            B.Nut1 = B.Nut2 = true;
-                            B.Hole1 = B.Hole2 = B.Hole3 = B.Hole4 = B.Hole5 = true;
-
-                            B.AddBoltDistX(plateHeight - 100.0);
-
-                            B.AddBoltDistY(200.0);
-
-                            B.Insert();
-
-                            #endregion
-
-                            _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(originalTransformationPlane);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Essential values could not be fetched!");
-                        }
-                    }
-                }
-
-                previousBeam = beam;
-            }
-        }
-
-        // Creates a beam between two points
-        private Beam CreateBeam(Point Point1, Point Point2)
-        {
-            TSM.Beam MyBeam = new TSM.Beam(Point1, Point2);
-
-            MyBeam.Profile.ProfileString = "HEA300";
-            MyBeam.Finish = "PAINT";
-            MyBeam.Insert();
-
-            return MyBeam;
-        }
-
-        //Main method
-        public override bool Run(List&ltInputDefinition&gt input)
-        {
-            try
-            {
-                ArrayList parts = new ArrayList();
-                ArrayList gaps = new ArrayList();
-
-                Vector Point1 = new Vector((Point)input[0].GetInput());
-                Vector Point2 = new Vector((Point)input[1].GetInput());
-                Vector LengthVector = new Vector(Point2 - Point1);
-
-                if(_data.Parameter1 < 10.0)
-                    _data.Parameter1 = BEAM_LENGTH;
-
-                double beamLength = _data.Parameter1;
-
-                //Calculate distance between picked points
-                double distance = Distance.PointToPoint(Point1, Point2);
-
-                int partCount = (int)Math.Ceiling(distance / (beamLength - EPSILON)); // parts - 1 == gaps
-
-                //Calculate the number of beams (6000mm length) that fit between those two points)
-                for(int i = 0; i < partCount; i++)
-                {
-                    Vector startLength = LengthVector.GetNormal() * ((beamLength + GAP_LENGTH) * i);
-                    Vector endLength;
-
-                    if(i == partCount - 1)
-                        endLength = LengthVector.GetNormal() * (distance - (i * (beamLength + GAP_LENGTH)));
-                    else
-                        endLength = LengthVector.GetNormal() * beamLength;
-
-                    Point start = Point1 + startLength;
-                    Point end = start + endLength;
-
-                    parts.Add(CreateBeam(start, end));
-
-                    Vector gapDistance = LengthVector.GetNormal() * (GAP_LENGTH / 2.0);
-                    Point gapPoint = end + gapDistance; // the middle point between the two beams
-
-                    if(i < partCount - 1)
-                        gaps.Add(gapPoint);
-                }
-
-                //Creates the rest of the beams and connections, first one has already been created
-                if(parts.Count > 1)
-                    CreateSpliceConnection(ref parts);
-
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-
-            return true;
-        }
-        
-       //.inp file user interface definition.
-        public class UserInterfaceDefinitions
-        {
-            public const string Plugin1 = @"" +
-                @"page(""TeklaStructures"","""")" + "\n" +
-                "{\n" +
-                "    plugin(1, SplicePlugin)\n" +
-                "    {\n" +
-                @"        tab_page(""Splice test"", ""Parameters"", 1)" + "\n" +
-                "        {\n" +
-                @"            parameter(""Beam length"", ""P1"", distance, number, 1)" + "\n" +
-                "        }\n" +
-                "    }\n" +
-                "}\n";
-
-        }
-    }
-}
-
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Splice plug-in (with .inp file user interface)</span><br /><span class="ts17">//## </span><span class="ts18">Credits:</span><span class="ts19">&nbsp;</span><span class="ts25">Tekla Corporation (Tekla OpenAPI Startup Package)</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Hint: Add the following Dlls to references:</span><br /><span class="ts20">//&quot;Tekla.Structures.dll&quot;</span><br /><span class="ts20">//&quot;Tekla.Structures.Model.dll&quot;</span><br /><span class="ts20">//&quot;Tekla.Structures.Plugins.dll&quot;</span><br /><span class="ts20">//Location: ~\[version]\nt\bin\plugins</span><br /><br /><span class="ts21">using</span><span class="ts22">&nbsp;System;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;System.Collections;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;System.Collections.Generic;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;System.Windows.Forms;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Model;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Model.UI;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Plugins;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;TSM = Tekla.Structures.Model;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Point = Tekla.Structures.Geometry3d.Point;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Geometry3d;</span><br /><br /><span class="ts21">namespace</span><span class="ts22">&nbsp;Tekla.Samples.SplicePlugin</span><br /><span class="ts22">{</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">class</span><span class="ts22">&nbsp;</span><span class="ts56">StructuresData</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [StructuresField(</span><span class="ts23">&quot;P1&quot;</span><span class="ts22">)]</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">double</span><span class="ts22">&nbsp;Parameter1;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; [Plugin(</span><span class="ts23">&quot;SplicePlugin&quot;</span><span class="ts22">)] </span><span class="ts20">// obligatory</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; [PluginUserInterface(SplicePlugin.UserInterfaceDefinitions.Plugin1)]</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">class</span><span class="ts22">&nbsp;</span><span class="ts56">SplicePlugin</span><span class="ts22">&nbsp;: PluginBase</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;StructuresData _data;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;TSM.Model _model;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;</span><span class="ts21">static</span><span class="ts22">&nbsp;</span><span class="ts21">readonly</span><span class="ts22">&nbsp;</span><span class="ts21">double</span><span class="ts22">&nbsp;EPSILON = 0.05;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Tolerance</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;</span><span class="ts21">static</span><span class="ts22">&nbsp;</span><span class="ts21">readonly</span><span class="ts22">&nbsp;</span><span class="ts21">double</span><span class="ts22">&nbsp;GAP_LENGTH = 5.0;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Gap between beams</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;</span><span class="ts21">static</span><span class="ts22">&nbsp;</span><span class="ts21">readonly</span><span class="ts22">&nbsp;</span><span class="ts21">double</span><span class="ts22">&nbsp;BEAM_LENGTH = 3000.0;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Beam length</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Constructor</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts56">SplicePlugin</span><span class="ts22">(StructuresData data)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">this</span><span class="ts22">._data = data;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _model = </span><span class="ts21">new</span><span class="ts22">&nbsp;TSM.Model();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Picks the points from the UI</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">override</span><span class="ts22">&nbsp;List&lt;InputDefinition&gt; DefineInput()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Picker BeamPicker = </span><span class="ts21">new</span><span class="ts22">&nbsp;Picker();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List&lt;InputDefinition&gt; PointList = </span><span class="ts21">new</span><span class="ts22">&nbsp;List&lt;InputDefinition&gt;();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point Point1 = BeamPicker.PickPoint();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point Point2 = BeamPicker.PickPoint();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; InputDefinition Input1 = </span><span class="ts21">new</span><span class="ts22">&nbsp;InputDefinition(Point1);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; InputDefinition Input2 = </span><span class="ts21">new</span><span class="ts22">&nbsp;InputDefinition(Point2);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PointList.Add(Input1);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PointList.Add(Input2);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">return</span><span class="ts22">&nbsp;PointList;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Creates connection between two beams. The connection consists of two plates and two bolt arrays.</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;</span><span class="ts21">void</span><span class="ts22">&nbsp;CreateSpliceConnection(</span><span class="ts21">ref</span><span class="ts22">&nbsp;ArrayList Parts)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TransformationPlane originalTransformationPlane = _model.GetWorkPlaneHandler().GetCurrentTransformationPlane();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;webThickness = 0.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;edgeDistance = 0.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;plateHeight = 0.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;beamHeight = 0.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;flangeHeight = 0.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;innerRoundingRadius = 0.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;innerMargin = 5.0;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Beam previousBeam = </span><span class="ts21">new</span><span class="ts22">&nbsp;Beam();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">bool</span><span class="ts22">&nbsp;first = </span><span class="ts21">true</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;beamLength = _data.Parameter1;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">// Loops through all the beams that have to be created between the two points</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">foreach</span><span class="ts22">&nbsp;(Beam beam </span><span class="ts21">in</span><span class="ts22">&nbsp;Parts)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">// In the first beam no connection is created, connections are always created after the first beam </span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(first)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; first = </span><span class="ts21">false</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">else</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">// Don't create connection after last part (beam)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(Parts.IndexOf(beam) &lt; (Parts.Count))</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">// First get the essential dimensions from the beam</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(beam.GetReportProperty(</span><span class="ts23">&quot;PROFILE.WEB_THICKNESS&quot;</span><span class="ts22">, </span><span class="ts21">ref</span><span class="ts22">&nbsp;webThickness) &amp;&amp;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; beam.GetReportProperty(</span><span class="ts23">&quot;PROFILE.HEIGHT&quot;</span><span class="ts22">, </span><span class="ts21">ref</span><span class="ts22">&nbsp;beamHeight) &amp;&amp;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; beam.GetReportProperty(</span><span class="ts23">&quot;PROFILE.FLANGE_THICKNESS&quot;</span><span class="ts22">, </span><span class="ts21">ref</span><span class="ts22">&nbsp;flangeHeight))</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Creates plates on both sides of the beam.</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts61">#region</span><span class="ts22">&nbsp;Create the Plates</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Beam plate1 = </span><span class="ts21">new</span><span class="ts22">&nbsp;Beam();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Beam plate2 = </span><span class="ts21">new</span><span class="ts22">&nbsp;Beam();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">// And then the optionals if they exist</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; beam.GetReportProperty(</span><span class="ts23">&quot;PROFILE.ROUNDING_RADIUS_1&quot;</span><span class="ts22">, </span><span class="ts21">ref</span><span class="ts22">&nbsp;innerRoundingRadius);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; edgeDistance = (flangeHeight + innerRoundingRadius + innerMargin);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plateHeight = beamHeight - 2 * edgeDistance;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CoordinateSystem coordSys = previousBeam.GetCoordinateSystem();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(</span><span class="ts21">new</span><span class="ts22">&nbsp;TransformationPlane(coordSys));</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.Position.Depth = plate2.Position.Depth = Position.DepthEnum.MIDDLE;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.Position.Rotation = plate2.Position.Rotation = Position.RotationEnum.FRONT;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.StartPoint = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + edgeDistance, webThickness);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.EndPoint = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + beamHeight - edgeDistance, webThickness);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate2.StartPoint = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + edgeDistance, -webThickness);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate2.EndPoint = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(beamLength + GAP_LENGTH / 2.0, (-beamHeight / 2.0) + beamHeight - edgeDistance, -webThickness);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.Profile.ProfileString = plate2.Profile.ProfileString = </span><span class="ts23">&quot;PL&quot;</span><span class="ts22">&nbsp;+ (</span><span class="ts21">int</span><span class="ts22">)webThickness + </span><span class="ts23">&quot;*300&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.Finish = plate2.Finish = </span><span class="ts23">&quot;PAINT&quot;</span><span class="ts22">;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate1.Insert();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plate2.Insert();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts61">#endregion</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Creates two boltArrays to connect the plates</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts61">#region</span><span class="ts22">&nbsp;Create the BoltArray</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(</span><span class="ts21">new</span><span class="ts22">&nbsp;TransformationPlane(plate1.GetCoordinateSystem()));</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BoltArray B = </span><span class="ts21">new</span><span class="ts22">&nbsp;BoltArray();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.PartToBoltTo = previousBeam;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.PartToBeBolted = plate1;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.AddOtherPartToBolt(plate2);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.AddOtherPartToBolt(beam);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.FirstPosition = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(0.0, 0.0, 0.0);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.SecondPosition = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(plateHeight, 0.0, 0.0);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.BoltSize = 16;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Tolerance = 3.00;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.BoltStandard = </span><span class="ts23">&quot;7990&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.BoltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.CutLength = 105;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Length = 100;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.ExtraLength = 15;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.ThreadInMaterial = BoltGroup.BoltThreadInMaterialEnum.THREAD_IN_MATERIAL_NO;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Position.Depth = Position.DepthEnum.MIDDLE;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Position.Plane = Position.PlaneEnum.MIDDLE;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Position.Rotation = Position.RotationEnum.FRONT;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Bolt = </span><span class="ts21">true</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Washer1 = B.Washer2 = B.Washer3 = </span><span class="ts21">true</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Nut1 = B.Nut2 = </span><span class="ts21">true</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Hole1 = B.Hole2 = B.Hole3 = B.Hole4 = B.Hole5 = </span><span class="ts21">true</span><span class="ts22">;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.AddBoltDistX(plateHeight - 100.0);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.AddBoltDistY(200.0);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B.Insert();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts61">#endregion</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(originalTransformationPlane);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">else</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MessageBox.Show(</span><span class="ts23">&quot;Essential values could not be fetched!&quot;</span><span class="ts22">);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; previousBeam = beam;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">// Creates a beam between two points</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;Beam CreateBeam(Point Point1, Point Point2)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TSM.Beam MyBeam = </span><span class="ts21">new</span><span class="ts22">&nbsp;TSM.Beam(Point1, Point2);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MyBeam.Profile.ProfileString = </span><span class="ts23">&quot;HEA300&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MyBeam.Finish = </span><span class="ts23">&quot;PAINT&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MyBeam.Insert();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">return</span><span class="ts22">&nbsp;MyBeam;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Main method</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">override</span><span class="ts22">&nbsp;</span><span class="ts21">bool</span><span class="ts22">&nbsp;Run(List&lt;InputDefinition&gt; input)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">try</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ArrayList parts = </span><span class="ts21">new</span><span class="ts22">&nbsp;ArrayList();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ArrayList gaps = </span><span class="ts21">new</span><span class="ts22">&nbsp;ArrayList();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector Point1 = </span><span class="ts21">new</span><span class="ts22">&nbsp;Vector((Point)input[0].GetInput());</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector Point2 = </span><span class="ts21">new</span><span class="ts22">&nbsp;Vector((Point)input[1].GetInput());</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector LengthVector = </span><span class="ts21">new</span><span class="ts22">&nbsp;Vector(Point2 - Point1);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(_data.Parameter1 &lt; 10.0)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _data.Parameter1 = BEAM_LENGTH;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;beamLength = _data.Parameter1;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Calculate distance between picked points</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">double</span><span class="ts22">&nbsp;distance = Distance.PointToPoint(Point1, Point2);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">int</span><span class="ts22">&nbsp;partCount = (</span><span class="ts21">int</span><span class="ts22">)Math.Ceiling(distance / (beamLength - EPSILON)); </span><span class="ts20">// parts - 1 == gaps</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Calculate the number of beams (6000mm length) that fit between those two points)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">for</span><span class="ts22">&nbsp;(</span><span class="ts21">int</span><span class="ts22">&nbsp;i = 0; i &lt; partCount; i++)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector startLength = LengthVector.GetNormal() * ((beamLength + GAP_LENGTH) * i);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector endLength;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(i == partCount - 1)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endLength = LengthVector.GetNormal() * (distance - (i * (beamLength + GAP_LENGTH)));</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">else</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; endLength = LengthVector.GetNormal() * beamLength;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point start = Point1 + startLength;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point end = start + endLength;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parts.Add(CreateBeam(start, end));</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vector gapDistance = LengthVector.GetNormal() * (GAP_LENGTH / 2.0);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point gapPoint = end + gapDistance; </span><span class="ts20">// the middle point between the two beams</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(i &lt; partCount - 1)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gaps.Add(gapPoint);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Creates the rest of the beams and connections, first one has already been created</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(parts.Count &gt; 1)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CreateSpliceConnection(</span><span class="ts21">ref</span><span class="ts22">&nbsp;parts);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">catch</span><span class="ts22">&nbsp;(Exception e)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MessageBox.Show(e.Message);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">return</span><span class="ts22">&nbsp;</span><span class="ts21">true</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//.inp file user interface definition:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">class</span><span class="ts22">&nbsp;</span><span class="ts56">UserInterfaceDefinitions</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">const</span><span class="ts22">&nbsp;</span><span class="ts21">string</span><span class="ts22">&nbsp;Plugin1 = </span><span class="ts60">@&quot;&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts60">@&quot;page(&quot;&quot;TeklaStructures&quot;&quot;,&quot;&quot;&quot;&quot;)&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot;\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;{\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp; plugin(1, SplicePlugin)\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp; {\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts60">@&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tab_page(&quot;&quot;Splice test&quot;&quot;, &quot;&quot;Parameters&quot;&quot;, 1)&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot;\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts60">@&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameter(&quot;&quot;Beam length&quot;&quot;, &quot;&quot;P1&quot;&quot;, distance, number, 1)&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot;\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp; }\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;}\n&quot;</span><span class="ts22">;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">}</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
+<p>&nbsp;</p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
-<p class="ps4"><span class="ts13">This Tekla Structures plug-in is a simple code example that creates beams and splice connections between them. </span></p>
-<p class="ps4"><span class="ts13">The plug-in uses the European environment, but code example can be changed by using other profiles, bolt standards and bolt sizes. </span></p>
-<p class="ps4"><span class="ts13">It creates 6000mm long beams between those points and between the beams, splices are created. The splices are constructed from two plates and four bolts, two bolt arrays.</span></p>
-<p class="ps4"><span class="ts17">&nbsp;</span></p>
-<p class="ps0"><img width="260" height="208" border="0" src="images/code-example-create-splice-connections-between-beams-491x392.png" /><span class="ts7">&nbsp;&nbsp;&nbsp; </span><img width="245" height="208" border="0" src="images/code-example-create-splice-connections-between-beams-close-up-491x416.png" /></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
+<p class="ps4"><span class="ts16">This Tekla Structures plug-in is a simple code example that creates beams and splice connections between them. </span></p>
+<p class="ps4"><span class="ts16">The plug-in uses the European environment, but code example can be changed by using other profiles, bolt standards and bolt sizes. </span></p>
+<p class="ps4"><span class="ts16">It creates 6000mm long beams between those points and between the beams, splices are created. The splices are constructed from two plates and four bolts, two bolt arrays.</span></p>
+<p class="ps4"><span class="ts32">&nbsp;</span></p>
+<p class="ps0"><img width="260" height="208" border="0" src="images/code-example-create-splice-connections-between-beams-491x392.png" /><span class="ts10">&nbsp;&nbsp;&nbsp; </span><img width="245" height="208" border="0" src="images/code-example-create-splice-connections-between-beams-close-up-491x416.png" /></p>
 </body>
 </html>

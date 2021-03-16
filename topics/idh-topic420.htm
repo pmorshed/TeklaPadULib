@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,85 +24,28 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Washer list by name (size-standard)
-// ### Compatibility: TS18 or newer
-// #############################################################
-
-//Hint: washer1/washer2/washer3 may have different standards (depends on bolt assembly catalog)
-	        
-//Gathering data for Washers1:
-var washer1 = from n in Database.OfType&ltBoltGroup&gt()
-//Filtering washer1:
-where n.Bolt==true && n.Washer1 == true
-group n by n.GetTeklaReport("washer.name1") into g
-let Name = g.Key
-let InnerD = g.First().GetTeklaReport("washer.inner diameter1")
-let Number = g.Sum(x => x.GetTeklaReport("washer.number1"))
-let Weight = g.Sum(x => (double)(x.GetTeklaReport("washer.weight1", 4)*x.GetTeklaReport("washer.number1")))
-select new { Name, InnerD, Number, Weight };
-
-//Gathering data for Washers2:
-var washer2 = from n in Database.OfType&ltBoltGroup&gt()
-//Filtering washer2:
-where n.Bolt==true && n.Washer2 == true
-group n by n.GetTeklaReport("washer.name2") into g
-let Name = g.Key
-let InnerD = g.First().GetTeklaReport("washer.inner diameter2")
-let Number = g.Sum(x => x.GetTeklaReport("washer.number2"))
-let Weight = g.Sum(x => (double)(x.GetTeklaReport("washer.weight2", 4)*x.GetTeklaReport("washer.number2")))
-select new { Name, InnerD, Number, Weight };
-
-//Gathering data for Washers3:
-var washer3 = from n in Database.OfType&ltBoltGroup&gt()
-//Filtering washer3:
-where n.Bolt==true && n.Washer3 == true
-group n by n.GetTeklaReport("washer.name3") into g
-let Name = g.Key
-let InnerD = g.First().GetTeklaReport("washer.inner diameter3")
-let Number = g.Sum(x => x.GetTeklaReport("washer.number3"))
-let Weight = g.Sum(x => (double)(x.GetTeklaReport("washer.weight3", 4)*x.GetTeklaReport("washer.number3")))
-select new { Name, InnerD, Number, Weight };
-
-//Concatenating three lists (Hint: Lists must have same column names for concatenating):
-var AllWashers = washer1.Concat(washer2).Concat(washer3);
-
-var result = from n in AllWashers
-group n by new { n.Name, n.InnerD } into g
-let TotalNumber = g.Sum(x => x.Number)
-let TotalWeight = Math.Round(g.Sum(x => (double)x.Weight), 4)
-select new { g.Key.Name, g.Key.InnerD, TotalNumber, TotalWeight };
-return result;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Washer list by name ([size]-[standard])</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts21">var</span><span class="ts22">&nbsp;result = </span><span class="ts21">from</span><span class="ts22">&nbsp;n </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;BoltGroup&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Removing bolt groups that have no any washer:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">where</span><span class="ts22">&nbsp;n.Bolt == </span><span class="ts21">true</span><span class="ts22">&nbsp;&amp;&amp; (n.Washer1 == </span><span class="ts21">true</span><span class="ts22">&nbsp;|| n.Washer2 == </span><span class="ts21">true</span><span class="ts22">&nbsp;|| n.Washer3 == </span><span class="ts21">true</span><span class="ts22">) &amp;&amp; n.GetTeklaReport(</span><span class="ts23">&quot;washer.weight&quot;</span><span class="ts22">) &gt; 0</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Grouping by name (contains [size]-[standard]):</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">group</span><span class="ts22">&nbsp;n </span><span class="ts21">by</span><span class="ts22">&nbsp;n.GetTeklaReport(</span><span class="ts23">&quot;washer.name&quot;</span><span class="ts22">) </span><span class="ts21">into</span><span class="ts22">&nbsp;g</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;washer = g.First()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required columns</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Name = g.Key</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;InnerD = washer.GetTeklaReport(</span><span class="ts23">&quot;washer.inner diameter&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;TotalNumber = g.Sum(x =&gt; x.GetTeklaReport(</span><span class="ts23">&quot;washer.number&quot;</span><span class="ts22">))</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Weight = washer.GetTeklaReport(</span><span class="ts23">&quot;washer.weight&quot;</span><span class="ts22">, 4) </span><span class="ts20">//Precision:4</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;TotalWeight = Math.Round((Weight * TotalNumber), 4) </span><span class="ts20">//Precision:4</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ Name, InnerD, TotalNumber, TotalWeight };</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;result;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="370" height="172" border="0" src="images/image(34).png" /></p>
-<p class="ps0"><span class="ts7">&nbsp;</span></p>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="370" height="171" border="0" src="images/image(65).png" /></p>
 </body>
 </html>

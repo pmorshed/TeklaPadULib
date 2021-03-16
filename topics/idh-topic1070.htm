@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,71 +24,25 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Rebar bending schedule
-// ### Measurement units: Metric
-// ### Compatibility: TS18 or newer
-// ### Hint: Make sure that numbering of objects is up to date.
-// #############################################################
-
-var res = from n in Database.OfType&ltPart&gt()
-		  from Reinforcement r in n.GetReinforcements().GetArray()
-		  where r.IsGeometryValid()
-		  group r by r.GetTeklaReport("rebar pos") into g
-		  let Pos = g.Key
-		  let rebar = g.First()
-		  let Shape = rebar.GetTeklaPullOut(BendingAngle: false)
-		  let Spec = rebar.GetTeklaReport("size")
-		  let L_min = rebar.GetTeklaReport("length min") / 1000  //converting to meter
-		  let L_max = rebar.GetTeklaReport("length max") / 1000  //converting to meter
-		  let W_min = rebar.GetTeklaReport("weight min", 7)
-		  //Detecting tapered groups (returns true if Lmin != Lmax):  
-		  let IsTapered = (L_min != L_max)
-		  let L = IsTapered ? L_min + "~" + L_max : L_min
-		  let No = g.Sum(x =&gt x.GetTeklaReport("number"))
-		  let WeightPerUnitLength = W_min / L_min
-		  let W_Total = IsTapered ? Math.Round(g.Sum(x =&gt (double)x.GetTeklaReport("weight total", 6)), 5) : W_min * No
-		  let L_Total = IsTapered ? Math.Round(W_Total / WeightPerUnitLength, 3) : L_min * No
-		  //Defining existing rebar sizes (based on your project):
-		  let T8 = Spec == "8" ? L_Total : "-"
-		  let T10 = Spec == "10" ? L_Total : "-"
-		  let T12 = Spec == "12" ? L_Total : "-"
-		  let T14 = Spec == "14" ? L_Total : "-"
-		  let T16 = Spec == "16" ? L_Total : "-"
-		  let T18 = Spec == "18" ? L_Total : "-"
-		  let T20 = Spec == "20" ? L_Total : "-"
-		  let T22 = Spec == "22" ? L_Total : "-"
-		  let T25 = Spec == "25" ? L_Total : "-"
-		  //Hint: You can hide unused rebar sizes in data table (right-click on header&gt Hide column) 	      
-		  select new { Pos, Shape, L, No, T8, T10, T12, T14, T16, T18, T20, T22, T25 };
-return res;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;Rebar bending schedule</span><br /><span class="ts17">//## Measurement units:</span><span class="ts25">&nbsp;Metric </span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span><br /><span class="ts17">//## Hint:</span><span class="ts25">&nbsp;Make sure that numbering of objects is up to date. </span><br /><span class="ts17">//## Hint:</span><span class="ts25">&nbsp;You can hide unused rebar sizes in data grid (right-click on header &gt; Hide column)</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts21">var</span><span class="ts22">&nbsp;result = </span><span class="ts21">from</span><span class="ts22">&nbsp;n </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Part&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">from</span><span class="ts22">&nbsp;Reinforcement r </span><span class="ts21">in</span><span class="ts22">&nbsp;n.GetReinforcements().GetArray()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">where</span><span class="ts22">&nbsp;r.IsGeometryValid()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">group</span><span class="ts22">&nbsp;r </span><span class="ts21">by</span><span class="ts22">&nbsp;r.GetTeklaReport(</span><span class="ts23">&quot;rebar pos&quot;</span><span class="ts22">) </span><span class="ts21">into</span><span class="ts22">&nbsp;g</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Pos = g.Key</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Keeping one instance (first one) from each group of data:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;rebar = g.First()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Shape = rebar.GetTeklaPullOut(BendingAngle: </span><span class="ts21">false</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Spec = rebar.GetTeklaReport(</span><span class="ts23">&quot;size&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L_min = Math.Round(rebar.GetTeklaReport(</span><span class="ts23">&quot;length min&quot;</span><span class="ts22">) / 1000, 3)&nbsp; </span><span class="ts20">//converting to meter</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L_max = Math.Round(rebar.GetTeklaReport(</span><span class="ts23">&quot;length max&quot;</span><span class="ts22">) / 1000, 3)&nbsp; </span><span class="ts20">//converting to meter</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L = rebar.IsTapered() ? L_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ L_max : L_min</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;No = g.Sum(x =&gt; x.GetTeklaReport(</span><span class="ts23">&quot;number&quot;</span><span class="ts22">))</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;W_Total = Math.Round(g.Sum(x =&gt; x.WeightInGroup(5)), 3)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L_Total = Math.Round(g.Sum(x =&gt; x.LengthInGroup(5)) / 10000, 3)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining existing rebar sizes (based on your project):</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T8 = Spec == </span><span class="ts23">&quot;8&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T10 = Spec == </span><span class="ts23">&quot;10&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T12 = Spec == </span><span class="ts23">&quot;12&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T14 = Spec == </span><span class="ts23">&quot;14&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T16 = Spec == </span><span class="ts23">&quot;16&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T18 = Spec == </span><span class="ts23">&quot;18&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T20 = Spec == </span><span class="ts23">&quot;20&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T22 = Spec == </span><span class="ts23">&quot;22&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;T25 = Spec == </span><span class="ts23">&quot;25&quot;</span><span class="ts22">&nbsp;? L_Total.ToString() : </span><span class="ts23">&quot;-&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ Pos, Shape, L, No, T8, T10, T12, T14, T16, T18, T20, T22, T25 }; </span><span class="ts20">//Hint: You can hide unused rebar sizes in data grid</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;result;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="355" height="333" border="0" src="images/image(71).png" /></p>
 </body>
 </html>

@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,102 +24,29 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Part rebar schedule by pos
-// ### Compatibility: TS18 or newer
-// ### Hint: Make sure that numbering of objects is up to date.
-// #############################################################
-
-//Walking through database items(selected items) and filtering "Parts":
-var result = from p in Database.OfType&ltPart&gt()
-//Filtering concrete parts:
-where p.GetTeklaReport("material type") == "CONCRETE"
-from Reinforcement r in p.GetReinforcements().GetArray()
-//Removing strands:
-where r.GetType().Name != "RebarStrand" && r.IsGeometryValid()
-//Grouping by pos and grade:
-let key1 = r.GetTeklaReport("rebar pos")
-let key2 = r.GetTeklaReport("grade")
-group r by new { key1, key2 } into g
-let rebar = g.First()
-//-------Temporary variables (Comparing values with 0.0 and replacing zero values with "-" ----------
-let a_min = Equals(rebar.GetTeklaReport("dim a min"), 0.0) ? "-" : rebar.GetTeklaReport("dim a min")
-let a_max = Equals(rebar.GetTeklaReport("dim a max"), 0.0) ? "-" : rebar.GetTeklaReport("dim a max")
-let b_min = Equals(rebar.GetTeklaReport("dim b min"), 0.0) ? "-" : rebar.GetTeklaReport("dim b min")
-let b_max = Equals(rebar.GetTeklaReport("dim b max"), 0.0) ? "-" : rebar.GetTeklaReport("dim b max")
-let c_min = Equals(rebar.GetTeklaReport("dim c min"), 0.0) ? "-" : rebar.GetTeklaReport("dim c min")
-let c_max = Equals(rebar.GetTeklaReport("dim c max"), 0.0) ? "-" : rebar.GetTeklaReport("dim c max")
-let d_min = Equals(rebar.GetTeklaReport("dim d min"), 0.0) ? "-" : rebar.GetTeklaReport("dim d min")
-let d_max = Equals(rebar.GetTeklaReport("dim d max"), 0.0) ? "-" : rebar.GetTeklaReport("dim d max")
-let e_min = Equals(rebar.GetTeklaReport("dim e min"), 0.0) ? "-" : rebar.GetTeklaReport("dim e min")
-let e_max = Equals(rebar.GetTeklaReport("dim e max"), 0.0) ? "-" : rebar.GetTeklaReport("dim e max")
-let u_min = Equals(rebar.GetTeklaReport("ang u min"), 0.0) ? "-" : rebar.GetTeklaReport("ang u min")
-let u_max = Equals(rebar.GetTeklaReport("ang u max"), 0.0) ? "-" : rebar.GetTeklaReport("ang u max")
-let v_min = Equals(rebar.GetTeklaReport("ang v min"), 0.0) ? "-" : rebar.GetTeklaReport("ang v min")
-let v_max = Equals(rebar.GetTeklaReport("ang v max"), 0.0) ? "-" : rebar.GetTeklaReport("ang v max")
-let td_min = Equals(rebar.GetTeklaReport("dim td min"), 0.0) ? "-" : rebar.GetTeklaReport("dim td min")
-let td_max = Equals(rebar.GetTeklaReport("dim td max"), 0.0) ? "-" : rebar.GetTeklaReport("dim td max")
-let L_min = rebar.GetTeklaReport("length min")
-let L_max = rebar.GetTeklaReport("length max")
-let W_min = rebar.GetTeklaReport("weight min")
-let W_max = rebar.GetTeklaReport("weight max")
-//Returns "true" for tapered groups:  
-let IsTapered = L_min != L_max
-//--------------------------------------------------------------------------- 
-
-//Defining required columns based on temporary variables:
-let Pos = g.Key.key1
-let grade = g.Key.key2
-let No = g.Sum(x => x.GetNumberOfRebars())
-let Size = rebar.GetTeklaReport("size")
-let length = IsTapered == true ? L_min + "~" + L_max : L_min
-let Weight = IsTapered == true ? W_min + "~" + W_max : W_min
-//Hint: It's recommended to use "WEIGHT_TOTAL_IN_GROUP" attribute instead of "WEIGHT_TOTAL" in newer versions of Tekla
-let W_Total = IsTapered ? Math.Round(g.Sum(x => (double)x.GetTeklaReport("weight total", 6)), 3) : W_min * No
-let L_Total = IsTapered ? Math.Round(W_Total * rebar.GetTeklaReport("length", 7) / rebar.GetTeklaReport("weight", 7), 3) : L_min * No
-let A = a_min == a_max ? a_min : a_min + "~" + a_max
-let B = b_min == b_max ? b_min : b_min + "~" + b_max
-let C = c_min == c_max ? c_min : c_min + "~" + c_max
-let D = d_min == d_max ? d_min : d_min + "~" + d_max
-let E = e_min == e_max ? e_min : e_min + "~" + e_max
-let U = u_min == u_max ? u_min : u_min + "~" + u_max
-let V = v_min == v_max ? v_min : v_min + "~" + v_max
-let TD = td_min == td_max ? td_min : td_min + "~" + td_max
-//Selecting a new table (from orginal database) with required columns:
-select new { Pos, Size, grade, No, length, Weight, A, B, C, D, E, U, V, TD, L_Total, W_Total };
-//Passing the final result to the gridview:
-return result;
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Part rebar schedule by pos.</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span><br /><span class="ts17">//## Hint:</span><span class="ts25">&nbsp;Make sure that numbering of objects is up to date. </span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Walking through database items(selected items) and filtering &quot;Parts&quot;:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;result = </span><span class="ts21">from</span><span class="ts22">&nbsp;p </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Part&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">from</span><span class="ts22">&nbsp;Reinforcement r </span><span class="ts21">in</span><span class="ts22">&nbsp;p.GetReinforcements().GetArray()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Removing strands and invalid shapes:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">where</span><span class="ts22">&nbsp;r.GetType().Name != </span><span class="ts23">&quot;RebarStrand&quot;</span><span class="ts22">&nbsp;&amp;&amp; r.IsGeometryValid()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Grouping by pos and grade:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;key1 = r.GetTeklaReport(</span><span class="ts23">&quot;rebar pos&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;key2 = r.GetTeklaReport(</span><span class="ts23">&quot;grade&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">group</span><span class="ts22">&nbsp;r </span><span class="ts21">by</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ key1, key2 } </span><span class="ts21">into</span><span class="ts22">&nbsp;g</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Keeping one instance (first one) from each group of data:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;rebar = g.First()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//-------Temporary variables (Comparing values with 0.0 and replacing zero values with &quot;-&quot; ----------</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;a_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim a min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim a min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;a_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim a max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim a max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;b_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim b min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim b min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;b_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim b max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim b max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;c_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim c min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim c min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;c_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim c max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim c max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;d_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim d min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim d min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;d_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim d max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim d max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;e_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim e min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim e min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;e_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim e max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim e max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;u_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;ang u min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;ang u min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;u_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;ang u max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;ang u max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;v_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;ang v min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;ang v min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;v_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;ang v max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;ang v max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;td_min = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim td min&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim td min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;td_max = Equals(rebar.GetTeklaReport(</span><span class="ts23">&quot;dim td max&quot;</span><span class="ts22">), 0.0) ? </span><span class="ts23">&quot;-&quot;</span><span class="ts22">&nbsp;: rebar.GetTeklaReport(</span><span class="ts23">&quot;dim td max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L_min = rebar.GetTeklaReport(</span><span class="ts23">&quot;length min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L_max = rebar.GetTeklaReport(</span><span class="ts23">&quot;length max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;W_min = rebar.GetTeklaReport(</span><span class="ts23">&quot;weight min&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;W_max = rebar.GetTeklaReport(</span><span class="ts23">&quot;weight max&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//--------------------------------------------------------------------------- </span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required columns based on temporary variables:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Pos = g.Key.key1</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;grade = g.Key.key2</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;No = g.Sum(x =&gt; x.GetNumberOfRebars())</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Size = rebar.GetTeklaReport(</span><span class="ts23">&quot;size&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;length = rebar.IsTapered() ? L_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ L_max : L_min</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Weight = rebar.IsTapered() ? W_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ W_max : W_min</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;W_Total = Math.Round(g.Sum(x =&gt; x.WeightInGroup(5)), 3)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;L_Total = Math.Round(g.Sum(x =&gt; x.LengthInGroup(5)), 3)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;A = a_min == a_max ? a_min : a_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ a_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;B = b_min == b_max ? b_min : b_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ b_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;C = c_min == c_max ? c_min : c_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ c_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;D = d_min == d_max ? d_min : d_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ d_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;E = e_min == e_max ? e_min : e_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ e_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;U = u_min == u_max ? u_min : u_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ u_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;V = v_min == v_max ? v_min : v_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ v_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;TD = td_min == td_max ? td_min : td_min + </span><span class="ts23">&quot;~&quot;</span><span class="ts22">&nbsp;+ td_max</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ Pos, Size, grade, No, length, Weight, A, B, C, D, E, U, V, TD, L_Total, W_Total };</span><br /><span class="ts20">//Passing the final result to the data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;result;</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="685" height="164" border="0" src="images/image(49).png" /></p>
-<p class="ps0"><span class="ts7">&nbsp;</span></p>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="685" height="252" border="0" src="images/image(52).png" /></p>
-<p class="ps0"><span class="ts7">&nbsp;</span></p>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 </body>
 </html>

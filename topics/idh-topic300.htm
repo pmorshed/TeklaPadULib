@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,62 +24,25 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// #############################################################
-// ### Author: TeklaPad
-// ### Desc.: Assembly part & sub-assembly by ID
-// ### Compatibility: TS18 or newer
-// #############################################################
-
-//STEP-1:List of assembly parts:
-var AssemblyParts = from n in Database.OfType&ltAssembly&gt()
-//Removing cast units:
-where n.GetTeklaReport("material type") == "STEEL"
-from Part p in n.PartList()
-//Defining required variables:
-let MainAssembly = "[ID:" + n.Identifier.ID + "]"
-let Type = "Part" + " [" + p.Profile.ProfileString + "]"
-let Weight = p.GetTeklaReport("weight net")
-select new { MainAssembly, Type, Weight };
-	        
-//STEP-2:List of sub-assemblies:
-var SubAssemblies = from n in Database.OfType&ltAssembly&gt()
-where n.GetTeklaReport("material type") == "STEEL"
-where n.GetSubAssemblies().Count>0
-from Assembly a in n.GetSubAssemblies()
-//Defining required variables:
-let MainAssembly = "[ID:" + n.Identifier.ID + "]"
-let Type = "Sub-assembly"
-let Weight = a.GetTeklaReport("weight net")
-select new { MainAssembly, Type, Weight };
-	        	        
-//Concatenating two lists (Hint: Lists must have same column names for concatenating):
-return AssemblyParts.Concat(SubAssemblies);
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Assembly part and sub-assembly list by ID</span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//STEP-1:List of assembly parts:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;AssemblyParts = </span><span class="ts21">from</span><span class="ts22">&nbsp;n </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Assembly&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">from</span><span class="ts22">&nbsp;Part p </span><span class="ts21">in</span><span class="ts22">&nbsp;n.PartList()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required variables:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;MainAssembly = </span><span class="ts23">&quot;[ID:&quot;</span><span class="ts22">&nbsp;+ n.Identifier.ID + </span><span class="ts23">&quot;]&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Type = </span><span class="ts23">&quot;Part&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot; [&quot;</span><span class="ts22">&nbsp;+ p.Profile.ProfileString + </span><span class="ts23">&quot;]&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Weight = p.GetTeklaReport(</span><span class="ts23">&quot;weight net&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ MainAssembly, Type, Weight };</span><br /><br /><span class="ts20">//STEP-2:List of sub-assemblies:</span><br /><span class="ts21">var</span><span class="ts22">&nbsp;SubAssemblies = </span><span class="ts21">from</span><span class="ts22">&nbsp;n </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;Assembly&gt;()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">where</span><span class="ts22">&nbsp;n.GetSubAssemblies().Count &gt; 0</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">from</span><span class="ts22">&nbsp;Assembly a </span><span class="ts21">in</span><span class="ts22">&nbsp;n.GetSubAssemblies()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defining required variables:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;MainAssembly = </span><span class="ts23">&quot;[ID:&quot;</span><span class="ts22">&nbsp;+ n.Identifier.ID + </span><span class="ts23">&quot;]&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Type = </span><span class="ts23">&quot;Sub-assembly&quot;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">let</span><span class="ts22">&nbsp;Weight = a.GetTeklaReport(</span><span class="ts23">&quot;weight net&quot;</span><span class="ts22">)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">select</span><span class="ts22">&nbsp;</span><span class="ts21">new</span><span class="ts22">&nbsp;{ MainAssembly, Type, Weight };</span><br /><br /><span class="ts20">//Step-3: Concatenating two lists</span><br /><span class="ts20">//Hint: Lists must have same column names (with same data types) for concatenating:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;AssemblyParts.Concat(SubAssemblies);</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p>&nbsp;</p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
 <p><img width="290" height="203" border="0" src="images/image(21).png" /></p>
 </body>
 </html>

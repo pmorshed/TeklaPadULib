@@ -2,7 +2,7 @@
 <html>
 <!-- saved from url=(0025)http://www.helpsmith.com/ -->
 <head>
-<title>Beam plugin</title>
+<title>Beam plugin (INP UI)</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <meta name="generator" content="HelpSmith 6.4 (Build 17.127)" />
 <style type="text/css" media="screen">
@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?abf6ff6c"></script>
+<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -24,139 +24,27 @@ body {
 </script>
 </head>
 <body>
-<p class="ps0"><html>
-<style>
-pre {
-	width: 100%;
-	padding: 0;
-	color: #0066ff;
-	margin: 0;
-	overflow: auto;
-	overflow-y: hidden;
-	font-size: 11px;
-	font-family: monospace;
-	line-height: 16px;
-	border: 1px solid #777;
-}
-</style>
-<body>
-<pre>
-
-// ####################################
-// ### Credits: Tekla Corporation
-// ### Desc.: Beam plugin
-// ####################################
-
-//Hint: Add the following Dlls to references:
-//"Tekla.Structures.dll"
-//"Tekla.Structures.Model.dll"
-//"Tekla.Structures.Plugins.dll"
-//Location: ~\[version]\nt\bin\plugins
-
-using System;
-using System.Collections.Generic;
-using Tekla.Structures.Plugins;
-using Tekla.Structures.Geometry3d;
-using Tekla.Structures.Model.UI;
-using TSM = Tekla.Structures.Model;
-
-public class StructuresData 
-{
-       [Tekla.Structures.Plugins.StructuresField("P1")]
-       public double Parameter1;
-}
-
-[Plugin("BeamPlugin")] // Mandatory field which defines that this is the plug-in and stores the name of the plug-in to the system.
-[PluginUserInterface(BeamPlugin.UserInterfaceDefinitions.Plugin1)] // Mandatory field which defines the user interface the plug-in uses. A Windows Forms class or a .inp file.
-public class BeamPlugin: PluginBase
-{
-       private readonly StructuresData data;
-
-       // The constructor argument defines the database class StructuresData and sets the data to be used in the plug-in.
-       public BeamPlugin(StructuresData data)
-       {
-           TSM.Model M = new TSM.Model();
-           this.data = data;
-       }
-
-       //Defines the inputs to be passed to the plug-in.
-       public override List&ltInputDefinition&gt DefineInput()
-       {
-           Picker BeamPicker = new Picker();
-           List&ltInputDefinition&gt PointList = new List&ltInputDefinition&gt();
-
-           Point Point1 = BeamPicker.PickPoint();
-           Point Point2 = BeamPicker.PickPoint();
-
-           InputDefinition Input1 = new InputDefinition(Point1);
-           InputDefinition Input2 = new InputDefinition(Point2);
-           PointList.Add(Input1);
-           PointList.Add(Input2);
-
-           return PointList;
-       }
-
-       //Main method of the plug-in.
-       public override bool Run(List&ltInputDefinition&gt Input)
-       {
-           try
-           {
-               Point Point1 = (Point)(Input[0]).GetInput();
-               Point Point2 = (Point)(Input[1]).GetInput();
-               Point LengthVector = new Point(Point2.X - Point1.X, Point2.Y - Point1.Y, Point2.Z - Point1.Z);
-
-               if(data.Parameter1 > 0)
-               {
-                   Point2.X = data.Parameter1 * LengthVector.X + Point1.X;
-                   Point2.Y = data.Parameter1 * LengthVector.Y + Point1.Y;
-                   Point2.Z = data.Parameter1 * LengthVector.Z + Point1.Z;
-               }
-
-               CreateBeam(Point1, Point2);
-           }
-           catch(Exception)
-           {
-           }
-
-           return true;
-       }
-
-       static void CreateBeam(Point Point1, Point Point2)
-       {
-           TSM.Beam MyBeam = new TSM.Beam(Point1, Point2);
-
-           MyBeam.Profile.ProfileString = "HEA400";
-           MyBeam.Finish = "PAINT";
-           MyBeam.Insert();
-       }
-
-       //.inp file user interface definition.
-       public class UserInterfaceDefinitions
-       {
-           public const string Plugin1 = @"" +
-           @"page(""TeklaStructures"","""")" + "\n" +
-            "{\n" +
-            "    plugin(1, BeamPlugin)\n" +
-            "    {\n" +
-           @"        tab_page(""Beam test"", ""Parametri_1"", 1)" + "\n" +
-            "        {\n" +
-           @"            parameter(""Length factor"", ""P1"", distance, number, 1)" + "\n" +
-            "        }\n" +
-            "    }\n" +
-            "}\n";
-
-       }
-}
-
-</pre>
-</body>
-</html></p>
+<div align="left">
+  <table class="tbl2">
+    <tr class="row0">
+      <td class="cell0">
+        <p class="ps5"><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Beam plug-in (with .inp file user interface)</span><br /><span class="ts17">//## </span><span class="ts18">Credits:</span><span class="ts19">&nbsp;</span><span class="ts25">Tekla Corporation (Tekla OpenAPI Startup Package)</span></p>
+      </td>
+    </tr>
+    <tr class="row0">
+      <td class="cell1">
+        <p class="ps6"><br /><span class="ts20">//Hint: Add the following Dlls to references:</span><br /><span class="ts20">//&quot;Tekla.Structures.dll&quot;</span><br /><span class="ts20">//&quot;Tekla.Structures.Model.dll&quot;</span><br /><span class="ts20">//&quot;Tekla.Structures.Plugins.dll&quot;</span><br /><span class="ts20">//Location: ~\[version]\nt\bin\plugins</span><br /><br /><span class="ts21">using</span><span class="ts22">&nbsp;System;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;System.Collections.Generic;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Plugins;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Geometry3d;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;Tekla.Structures.Model.UI;</span><br /><span class="ts21">using</span><span class="ts22">&nbsp;TSM = Tekla.Structures.Model;</span><br /><br /><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">class</span><span class="ts22">&nbsp;</span><span class="ts56">StructuresData</span><br /><span class="ts22">{</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; [StructuresField(</span><span class="ts23">&quot;P1&quot;</span><span class="ts22">)]</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">double</span><span class="ts22">&nbsp;Parameter1;</span><br /><span class="ts22">}</span><br /><br /><span class="ts22">[Plugin(</span><span class="ts23">&quot;BeamPlugin&quot;</span><span class="ts22">)] </span><span class="ts20">// Mandatory field which defines that this is the plug-in and stores the name of the plug-in to the system.</span><br /><span class="ts22">[PluginUserInterface(BeamPlugin.UserInterfaceDefinitions.Plugin1)] </span><span class="ts20">// Mandatory field which defines the user interface the plug-in uses. A Windows Forms class or a .inp file.</span><br /><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">class</span><span class="ts22">&nbsp;</span><span class="ts56">BeamPlugin</span><span class="ts22">&nbsp;: PluginBase</span><br /><span class="ts22">{</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">private</span><span class="ts22">&nbsp;</span><span class="ts21">readonly</span><span class="ts22">&nbsp;StructuresData data;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">// The constructor argument defines the database class StructuresData and sets the data to be used in the plug-in.</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts56">BeamPlugin</span><span class="ts22">(StructuresData data)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TSM.Model M = </span><span class="ts21">new</span><span class="ts22">&nbsp;TSM.Model();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">this</span><span class="ts22">.data = data;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Defines the inputs to be passed to the plug-in.</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">override</span><span class="ts22">&nbsp;List&lt;InputDefinition&gt; DefineInput()</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Picker BeamPicker = </span><span class="ts21">new</span><span class="ts22">&nbsp;Picker();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List&lt;InputDefinition&gt; PointList = </span><span class="ts21">new</span><span class="ts22">&nbsp;List&lt;InputDefinition&gt;();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point Point1 = BeamPicker.PickPoint();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point Point2 = BeamPicker.PickPoint();</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; InputDefinition Input1 = </span><span class="ts21">new</span><span class="ts22">&nbsp;InputDefinition(Point1);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; InputDefinition Input2 = </span><span class="ts21">new</span><span class="ts22">&nbsp;InputDefinition(Point2);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PointList.Add(Input1);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PointList.Add(Input2);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">return</span><span class="ts22">&nbsp;PointList;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Main method of the plug-in.</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">override</span><span class="ts22">&nbsp;</span><span class="ts21">bool</span><span class="ts22">&nbsp;Run(List&lt;InputDefinition&gt; Input)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">try</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point Point1 = (Point)(Input[0]).GetInput();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point Point2 = (Point)(Input[1]).GetInput();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point LengthVector = </span><span class="ts21">new</span><span class="ts22">&nbsp;Point(Point2.X - Point1.X, Point2.Y - Point1.Y, Point2.Z - Point1.Z);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">if</span><span class="ts22">&nbsp;(data.Parameter1 &gt; 0)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point2.X = data.Parameter1 * LengthVector.X + Point1.X;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point2.Y = data.Parameter1 * LengthVector.Y + Point1.Y;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Point2.Z = data.Parameter1 * LengthVector.Z + Point1.Z;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CreateBeam(Point1, Point2);</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">catch</span><span class="ts22">&nbsp;(Exception)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">return</span><span class="ts22">&nbsp;</span><span class="ts21">true</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">static</span><span class="ts22">&nbsp;</span><span class="ts21">void</span><span class="ts22">&nbsp;CreateBeam(Point Point1, Point Point2)</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TSM.Beam MyBeam = </span><span class="ts21">new</span><span class="ts22">&nbsp;TSM.Beam(Point1, Point2);</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MyBeam.Profile.ProfileString = </span><span class="ts23">&quot;HEA400&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MyBeam.Finish = </span><span class="ts23">&quot;PAINT&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MyBeam.Insert();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//.inp file user interface definition:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">class</span><span class="ts22">&nbsp;</span><span class="ts56">UserInterfaceDefinitions</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; {</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts21">public</span><span class="ts22">&nbsp;</span><span class="ts21">const</span><span class="ts22">&nbsp;</span><span class="ts21">string</span><span class="ts22">&nbsp;Plugin1 = </span><span class="ts60">@&quot;&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts60">@&quot;page(&quot;&quot;TeklaStructures&quot;&quot;,&quot;&quot;&quot;&quot;)&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot;\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;{\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp; plugin(1, BeamPlugin)\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp; {\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts60">@&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tab_page(&quot;&quot;Beam test&quot;&quot;, &quot;&quot;Parameters&quot;&quot;, 1)&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot;\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts60">@&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameter(&quot;&quot;Length factor&quot;&quot;, &quot;&quot;P1&quot;&quot;, distance, number, 1)&quot;</span><span class="ts22">&nbsp;+ </span><span class="ts23">&quot;\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;&nbsp;&nbsp;&nbsp; }\n&quot;</span><span class="ts22">&nbsp;+</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="ts23">&quot;}\n&quot;</span><span class="ts22">;</span><br /><br /><span class="ts22">&nbsp;&nbsp;&nbsp; }</span><br /><span class="ts22">}</span></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<p class="ps0"><span class="ts10">&nbsp;</span></p>
 <div>
   <div class="hline0"></div>
 </div>
-<p class="ps0"><span class="ts14">Usage:</span></p>
-<p class="ps4"><span class="ts13">This Tekla Open API example plug-in creates a beam defined by user input.</span></p>
-<p class="ps4"><span class="ts13">User can select the length factor for the beam. The plugin asks the user to pick two points. </span></p>
-<p class="ps4"><span class="ts13">Based on those points, it calculates new insertion points using a double parameter from the dialog and creates a beam. </span></p>
+<p class="ps0"><span class="ts24">Usage:</span></p>
+<p class="ps4"><span class="ts16">This Tekla Open API example plug-in creates a beam defined by user input.</span></p>
+<p class="ps4"><span class="ts16">User can select the length factor for the beam. The plug-in asks the user to pick two points. </span></p>
+<p class="ps4"><span class="ts16">Based on those points, it calculates new insertion points using a double parameter from the dialog and creates a beam. </span></p>
 </body>
 </html>
