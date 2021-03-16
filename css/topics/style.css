@@ -58,7 +58,6 @@ map > area {
 }
 .ts9 {
   font-family: Tahoma;
-  font-size: 10pt;
   font-weight: bold;
 }
 .ts10 {
@@ -67,11 +66,11 @@ map > area {
 .ts11 {
   font-family: Tahoma;
   font-weight: bold;
+  color: #1f497d;
 }
 .ts12 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #1f497d;
 }
 .ts13 {
   font-family: Tahoma;
@@ -80,14 +79,15 @@ map > area {
 .ts14 {
   font-family: Tahoma;
   font-weight: bold;
+  color: Red;
 }
 .ts15 {
   font-family: Tahoma;
-  font-weight: bold;
-  color: Red;
 }
 .ts16 {
-  font-family: Tahoma;
+  font-family: Consolas;
+  font-weight: bold;
+  color: Black;
 }
 .ts17 {
   font-family: Consolas;
@@ -96,201 +96,196 @@ map > area {
 }
 .ts18 {
   font-family: Consolas;
-  font-weight: bold;
   color: Black;
 }
 .ts19 {
   font-family: Consolas;
-  color: Black;
+  color: Green;
 }
 .ts20 {
   font-family: Consolas;
-  color: Green;
+  color: Blue;
 }
 .ts21 {
   font-family: Consolas;
-  color: Blue;
+  color: Black;
 }
 .ts22 {
   font-family: Consolas;
-  color: Black;
-}
-.ts23 {
-  font-family: Consolas;
   color: #a31515;
 }
-.ts24 {
+.ts23 {
   font-family: Tahoma;
   font-weight: bold;
   color: #0070c0;
 }
-.ts25 {
+.ts24 {
   font-family: Consolas;
   color: Black;
 }
-.ts26 {
+.ts25 {
   font-family: Tahoma;
   font-size: 11pt;
 }
-.ts27 {
+.ts26 {
   font-family: Tahoma;
   font-weight: bold;
 }
-.ts28 {
+.ts27 {
   font-family: Consolas;
   color: Green;
 }
-.ts29 {
+.ts28 {
   font-family: Consolas;
   color: Blue;
 }
-.ts30 {
+.ts29 {
   font-family: Consolas;
   color: Black;
 }
-.ts31 {
+.ts30 {
   font-family: Consolas;
   color: #a31515;
 }
-.ts32 {
+.ts31 {
   font-family: 'Courier New';
 }
-.ts33 {
+.ts32 {
   font-family: Tahoma;
   text-decoration: underline;
 }
-.ts34 {
+.ts33 {
   font-family: 'Courier New';
   font-weight: bold;
   color: Blue;
 }
-.ts35 {
+.ts34 {
   font-family: Consolas;
   font-size: 10pt;
   font-weight: bold;
   color: Black;
 }
-.ts36 {
+.ts35 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
 }
-.ts37 {
+.ts36 {
   font-family: Tahoma;
   font-size: 11pt;
   font-weight: bold;
   color: #1f497d;
 }
-.ts38 {
+.ts37 {
   font-family: Tahoma;
   font-weight: bold;
   color: #7f7f7f;
 }
-.ts39 {
+.ts38 {
   font-family: Tahoma;
   font-weight: bold;
   text-decoration: underline;
 }
-.ts40 {
+.ts39 {
   font-family: Tahoma;
   font-weight: bold;
   color: #00b050;
 }
-.ts41 {
+.ts40 {
   font-family: Tahoma;
   font-weight: bold;
   color: Black;
 }
-.ts42 {
+.ts41 {
   font-family: Tahoma;
   font-weight: bold;
   color: #070c12;
 }
+.ts42 {
+  font-family: Tahoma;
+  color: Black;
+}
 .ts43 {
   font-family: Tahoma;
+  font-weight: bold;
   color: Black;
 }
 .ts44 {
   font-family: Tahoma;
   font-weight: bold;
-  color: Black;
+  color: Red;
 }
 .ts45 {
   font-family: Tahoma;
   font-weight: bold;
-  color: Red;
+  color: #00b050;
 }
 .ts46 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #00b050;
 }
 .ts47 {
-  font-family: Tahoma;
-  font-weight: bold;
-}
-.ts48 {
   font-family: Consolas;
   font-weight: bold;
   color: Blue;
 }
-.ts49 {
+.ts48 {
   font-family: Consolas;
   font-weight: bold;
   color: Black;
 }
-.ts50 {
+.ts49 {
   font-family: Consolas;
   font-weight: bold;
   color: Green;
 }
-.ts51 {
+.ts50 {
   font-family: 'Courier New';
   font-weight: bold;
 }
-.ts52 {
+.ts51 {
   font-family: Tahoma;
+}
+.ts52 {
+  font-family: Consolas;
+  font-weight: bold;
+  color: #2b91af;
 }
 .ts53 {
   font-family: Consolas;
   font-weight: bold;
-  color: #2b91af;
 }
 .ts54 {
   font-family: Consolas;
-  font-weight: bold;
 }
 .ts55 {
   font-family: Consolas;
-}
-.ts56 {
-  font-family: Consolas;
   color: #2b91af;
 }
-.ts57 {
+.ts56 {
   font-family: Tahoma;
   color: Black;
 }
-.ts58 {
+.ts57 {
   font-family: Consolas;
 }
-.ts59 {
+.ts58 {
   font-family: Tahoma;
 }
-.ts60 {
+.ts59 {
   font-family: Consolas;
   color: Maroon;
 }
-.ts61 {
+.ts60 {
   font-family: Consolas;
   color: Gray;
 }
-.ts62 {
+.ts61 {
   font-family: Tahoma;
   font-weight: bold;
   color: #7f7f7f;
 }
-.ts63 {
+.ts62 {
   font-family: Consolas;
   font-size: 10pt;
   color: Black;
@@ -319,14 +314,14 @@ map > area {
   font-size: 9pt;
 }
 .ps2 {
-  text-align: center;
-  font-size: 11pt;
+  font-size: 10pt;
 }
 .ps3 {
   text-align: center;
+  font-size: 11pt;
 }
 .ps4 {
-  font-size: 10pt;
+  padding-left: 40px;
 }
 .ps5 {
   padding-right: 5px;

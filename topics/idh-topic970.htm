@@ -16,7 +16,7 @@ body {
 </style>
 <link type="text/css" href="../css/topics/style.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="../js/settings.js?e4c553dc"></script>
+<script type="text/javascript" src="../js/settings.js?15ccea6e"></script>
 <script type="text/javascript" src="../js/core.js?e3fa3091"></script>
 <script type="text/javascript" src="../js/topic.js?e3fa3091"></script>
 <script type="text/javascript">
@@ -28,12 +28,12 @@ body {
   <table class="tbl2">
     <tr class="row0">
       <td class="cell0">
-        <p class="ps5"><span class="ts17">//## </span><span class="ts18">&nbsp;Author:</span><span class="ts19">&nbsp;TeklaPad</span><br /><span class="ts17">//## </span><span class="ts18">Description:</span><span class="ts19">&nbsp;</span><span class="ts25">Converting PolyBeams to contour plates </span><br /><span class="ts17">//## </span><span class="ts18">Compatibility:</span><span class="ts19">&nbsp;TS18 or newer</span></p>
+        <p class="ps5"><span class="ts16">//## </span><span class="ts17">&nbsp;Author:</span><span class="ts18">&nbsp;TeklaPad</span><br /><span class="ts16">//## </span><span class="ts17">Description:</span><span class="ts18">&nbsp;</span><span class="ts24">Converting PolyBeams to contour plates </span><br /><span class="ts16">//## </span><span class="ts17">Compatibility:</span><span class="ts18">&nbsp;TS18 or newer</span></p>
       </td>
     </tr>
     <tr class="row0">
       <td class="cell1">
-        <p class="ps6"><br /><span class="ts22">Model m1 = </span><span class="ts21">new</span><span class="ts22">&nbsp;Model();</span><br /><span class="ts20">//Walking through database items(selected items) and filtering polybeams:</span><br /><span class="ts21">foreach</span><span class="ts22">&nbsp;(var item </span><span class="ts21">in</span><span class="ts22">&nbsp;Database.OfType&lt;PolyBeam&gt;())</span><br /><span class="ts22">{</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Creating contour plate:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; ContourPlate cplate = </span><span class="ts21">new</span><span class="ts22">&nbsp;ContourPlate();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; cplate.Profile.ProfileString = </span><span class="ts23">&quot;PL50&quot;</span><span class="ts22">;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; cplate.Contour.ContourPoints = item.Contour.ContourPoints;</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; </span><span class="ts20">//Removing the polybeam:</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; item.Delete();</span><br /><span class="ts22">&nbsp;&nbsp;&nbsp; cplate.Insert();</span><br /><span class="ts22">}</span><br /><span class="ts20">//Updating the model view:</span><br /><span class="ts22">m1.CommitChanges();</span><br /><span class="ts20">//Passing nothing to data grid:</span><br /><span class="ts21">return</span><span class="ts22">&nbsp;</span><span class="ts21">null</span><span class="ts22">;</span></p>
+        <p class="ps6"><br /><span class="ts21">Model m1 = </span><span class="ts20">new</span><span class="ts21">&nbsp;Model();</span><br /><span class="ts19">//Walking through database items(selected items) and filtering polybeams:</span><br /><span class="ts20">foreach</span><span class="ts21">&nbsp;(var item </span><span class="ts20">in</span><span class="ts21">&nbsp;Database.OfType&lt;PolyBeam&gt;())</span><br /><span class="ts21">{</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; </span><span class="ts19">//Creating contour plate:</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; ContourPlate cplate = </span><span class="ts20">new</span><span class="ts21">&nbsp;ContourPlate();</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; cplate.Profile.ProfileString = </span><span class="ts22">&quot;PL50&quot;</span><span class="ts21">;</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; cplate.Contour.ContourPoints = item.Contour.ContourPoints;</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; </span><span class="ts19">//Removing the polybeam:</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; item.Delete();</span><br /><span class="ts21">&nbsp;&nbsp;&nbsp; cplate.Insert();</span><br /><span class="ts21">}</span><br /><span class="ts19">//Updating the model view:</span><br /><span class="ts21">m1.CommitChanges();</span><br /><span class="ts19">//Passing nothing to data grid:</span><br /><span class="ts20">return</span><span class="ts21">&nbsp;</span><span class="ts20">null</span><span class="ts21">;</span></p>
       </td>
     </tr>
   </table>
