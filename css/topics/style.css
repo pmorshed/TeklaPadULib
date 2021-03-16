@@ -317,11 +317,11 @@ map > area {
   font-size: 10pt;
 }
 .ps3 {
-  text-align: center;
+  padding-left: 30px;
   font-size: 11pt;
 }
 .ps4 {
-  padding-left: 40px;
+  padding-left: 30px;
 }
 .ps5 {
   padding-right: 5px;
@@ -394,34 +394,16 @@ map > area {
   border-style: none;
 }
 .tbl0 > tbody > tr > td.cell3 {
-  width: 124.5pt;
-  height: 22px;
-  vertical-align: top;
-  border-style: none;
-}
-.tbl0 > tbody > tr > td.cell4 {
-  width: 7.2in;
-  height: 22px;
-  vertical-align: middle;
-  border-style: none;
-}
-.tbl0 > tbody > tr > td.cell5 {
-  width: 7.5pt;
-  height: 22px;
-  vertical-align: top;
-  border-style: none;
-}
-.tbl0 > tbody > tr > td.cell6 {
   width: 183.75pt;
   vertical-align: top;
   border-style: none;
 }
-.tbl0 > tbody > tr > td.cell7 {
+.tbl0 > tbody > tr > td.cell4 {
   width: 252.75pt;
   vertical-align: top;
   border-style: none;
 }
-.tbl0 > tbody > tr > td.cell8 {
+.tbl0 > tbody > tr > td.cell5 {
   width: 119.25pt;
   vertical-align: top;
   border-style: none;
