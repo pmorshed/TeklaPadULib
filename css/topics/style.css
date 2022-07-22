@@ -139,63 +139,62 @@ map > area {
   font-weight: bold;
 }
 .ts29 {
-  font-family: Consolas;
-  font-size: 10pt;
-  color: Green;
-}
-.ts30 {
-  font-family: Consolas;
-  font-size: 10pt;
-  color: Blue;
-}
-.ts31 {
-  font-family: Consolas;
-  font-size: 10pt;
-  color: Black;
-}
-.ts32 {
-  font-family: Consolas;
-  font-size: 10pt;
-  color: #a31515;
-}
-.ts33 {
   font-family: 'Courier New';
 }
-.ts34 {
+.ts30 {
   font-family: Tahoma;
   text-decoration: underline;
 }
-.ts35 {
+.ts31 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: Red;
+  background-color: #ffff73;
+}
+.ts32 {
   font-family: 'Courier New';
   font-weight: bold;
   color: Blue;
 }
-.ts36 {
+.ts33 {
+  font-family: Tahoma;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.ts34 {
   font-family: Consolas;
   font-size: 10pt;
+  font-weight: bold;
+  color: Black;
+}
+.ts35 {
+  font-family: Tahoma;
+  font-weight: bold;
+  color: #00b050;
+}
+.ts36 {
+  font-family: Tahoma;
   font-weight: bold;
   color: Black;
 }
 .ts37 {
   font-family: Tahoma;
-  font-size: 11pt;
   font-weight: bold;
+  color: #070c12;
 }
 .ts38 {
   font-family: Tahoma;
-  font-size: 11pt;
-  font-weight: bold;
-  color: #1f497d;
+  color: Black;
 }
 .ts39 {
   font-family: Tahoma;
   font-weight: bold;
-  color: #7f7f7f;
+  color: Black;
 }
 .ts40 {
   font-family: Tahoma;
   font-weight: bold;
-  text-decoration: underline;
+  color: Red;
 }
 .ts41 {
   font-family: Tahoma;
@@ -205,96 +204,76 @@ map > area {
 .ts42 {
   font-family: Tahoma;
   font-weight: bold;
-  color: Black;
 }
 .ts43 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: #070c12;
-}
-.ts44 {
-  font-family: Tahoma;
-  color: Black;
-}
-.ts45 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: Black;
-}
-.ts46 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: Red;
-}
-.ts47 {
-  font-family: Tahoma;
-  font-weight: bold;
-  color: #00b050;
-}
-.ts48 {
-  font-family: Tahoma;
-  font-weight: bold;
-}
-.ts49 {
   font-family: Consolas;
   font-weight: bold;
   color: Blue;
 }
-.ts50 {
+.ts44 {
   font-family: Consolas;
   font-weight: bold;
   color: Black;
 }
-.ts51 {
+.ts45 {
   font-family: Consolas;
   font-weight: bold;
   color: Green;
 }
-.ts52 {
+.ts46 {
   font-family: 'Courier New';
   font-weight: bold;
 }
-.ts53 {
+.ts47 {
   font-family: Tahoma;
 }
-.ts54 {
+.ts48 {
   font-family: Consolas;
   font-weight: bold;
   color: #2b91af;
 }
-.ts55 {
+.ts49 {
   font-family: Consolas;
   font-weight: bold;
 }
-.ts56 {
+.ts50 {
   font-family: Consolas;
 }
-.ts57 {
+.ts51 {
   font-family: Consolas;
   color: #2b91af;
 }
-.ts58 {
+.ts52 {
+  font-family: Tahoma;
+  color: #f60000;
+}
+.ts53 {
   font-family: Tahoma;
   color: Black;
 }
-.ts59 {
+.ts54 {
   font-family: Consolas;
 }
-.ts60 {
+.ts55 {
   font-family: Tahoma;
 }
-.ts61 {
+.ts56 {
   font-family: Consolas;
   color: Maroon;
 }
-.ts62 {
+.ts57 {
   font-family: Consolas;
   color: Gray;
 }
-.ts63 {
+.ts58 {
   font-family: Tahoma;
   font-weight: bold;
   color: #7f7f7f;
+}
+.ts59 {
+  font-family: Consolas;
+  font-size: 10pt;
+  color: Black;
 }
 .hs0 {
   font-family: Tahoma;
